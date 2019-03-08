@@ -2,6 +2,40 @@ import React, { Component } from "react";
 import "./Comment.css";
 
 class Comment extends Component {
+  state = {
+    comment: {},
+    comment_key: undefined,
+    post_title: ""
+  };
+
+  componentDidMount() {
+    console.log(this.props);
+    this.setState({
+      comment: this.props.comment,
+      comment_key: this.props.comment.key,
+      post_title: this.props.post_title
+    });
+  }
+
+  printDate(timestamp) {
+    if (!timestamp) return "";
+    var dateObj = timestamp.toDate();
+    dateObj = new Date(dateObj.getTime() + dateObj.getTimezoneOffset() * 60000);
+    function pad(n) {
+      return n < 10 ? "0" + n : n;
+    }
+    return (
+      pad(dateObj.getDate()) +
+      "-" +
+      pad(dateObj.getMonth()) +
+      "-" +
+      dateObj.getFullYear() +
+      " " +
+      pad(dateObj.getHours()) +
+      ":" +
+      pad(dateObj.getMinutes())
+    );
+  }
   render() {
     const hello = {
       flex: "1 1 100px"
@@ -21,21 +55,26 @@ class Comment extends Component {
                   <thead>
                     <tr>
                       <th className="thead font-weight-light border border-right-0">
-                        Yesterday, 09:42 PM
+                        {this.printDate(this.props.comment.timestamp)}
                       </th>
                       <th className="thead font-weight-strong border border-left-0">
-                        <span className="text-left">Re: Some post title</span>
-                        <span className="float-right">
-                          &nbsp; #
-                          <a
-                            href="/questions/linux-newbie-8/chrome-browser-on-linux-mint-4175649625/#post5971042"
-                            rel="nofollow"
-                            id="postcount5971042"
-                            name="7"
-                          >
-                            <strong>7</strong>
-                          </a>
+                        <span className="text-left">
+                          {this.props.comment.id && "Re:"}{" "}
+                          {this.props.post_title}{" "}
                         </span>
+                        {this.props.comment.id && (
+                          <span className="float-right">
+                            &nbsp; #
+                            <a
+                              href="/questions/linux-newbie-8/chrome-browser-on-linux-mint-4175649625/#post5971042"
+                              rel="nofollow"
+                              id="postcount5971042"
+                              name="7"
+                            >
+                              <strong>{this.props.comment.id}</strong>
+                            </a>
+                          </span>
+                        )}{" "}
                       </th>
                     </tr>
                   </thead>
@@ -43,20 +82,19 @@ class Comment extends Component {
                     <tr className="align-top">
                       <td className="alt2 border" width="175">
                         <div id="postmenu_5971042">
-                          <div className="font-weight-strong">Username</div>
+                          <div className="font-weight-strong">
+                            {this.props.comment.author}
+                          </div>
                         </div>
                         <div className="small text-muted">
                           &nbsp;
                           <br />
-                          <div>Registered: Mar 2019</div>
+                          <div>Registered: </div>
                         </div>
                       </td>
                       <td className="alt2 border" id="td_post_5971042">
                         <div id="post_message_5971042">
-                          Some text Some text Some text Some text Some text Some
-                          text Some text Some text Some text Some text Some text
-                          Some text Some text Some text Some text Some text Some
-                          text Some text Some text Some text Some text Some text
+                          {this.props.comment.text}
                         </div>
 
                         <div className="small text-muted" style={hello}>
@@ -95,7 +133,7 @@ class Comment extends Component {
           </div>
         </div>
 
-        <hr />
+        <br />
       </div>
     );
   }

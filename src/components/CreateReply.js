@@ -1,26 +1,22 @@
 import React, { Component } from "react";
-//import ReactDOM from 'react-dom';
 import firebase from "../Firebase";
-import { Link } from "react-router-dom";
 
 class CreateReply extends Component {
-  fire_post = firebase
-    .firestore()
-    .collection("posts")
-    .doc(this.props.post_key);
-  fire_comment_coll = firebase.firestore().collection("comments");
-  fire_comment = firebase
-    .firestore()
-    .collection("comments")
-    .doc(this.props.post_key);
   state = {
     comment_key: "",
     post_key: "",
     text: ""
   };
+  fire_post = firebase
+    .firestore()
+    .collection("posts")
+    .doc(this.props.post_key);
+  fire_comment = firebase
+    .firestore()
+    .collection("comments")
+    .doc(this.props.post_key);
 
   componentDidMount() {
-    console.log("this.props:", this.props);
     this.fire_post.get().then(doc => {
       if (doc.exists) {
         this.setState({
@@ -30,19 +26,15 @@ class CreateReply extends Component {
           text: "",
           isLoading: false
         });
-        console.log("fire_post:", doc.id, doc.data());
-        console.log("this.state:", this.state);
       } else {
         console.error("No such document!");
       }
     });
-    //console.log("this.fire_comment_coll", this.fire_comment_coll);
-    //console.log("this.fire_comment", this.fire_comment);
   }
 
   onSubmit = e => {
     e.preventDefault();
-    const { post_key, comment_key, text } = this.state;
+    const { comment_key, text } = this.state;
     var data = {
       author: this.getUserName(),
       profilePicUrl: this.getProfilePicUrl(),
@@ -50,8 +42,8 @@ class CreateReply extends Component {
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    //not working on fire_comment or fire_comment_coll
-    //this.fire_comment_coll.FieldValue.arrayUnion(data)
+    //not working on fire_comment
+    //this.fire_comment.FieldValue.arrayUnion(data)
 
     /*
     //Add collection. Works, one nesting (2nd document) too much
@@ -94,13 +86,14 @@ class CreateReply extends Component {
     this.fire_post
       .update({ comments: this.state.comment_key })
       .then(docRef => {
-        console.log("success");
+        // Close Reply menu
+        this.props.toggleShowComment();
+        // Can I refresh <Comment> children in Show? Well, reload the page
+        window.location.reload();
       })
       .catch(error => {
         console.error("Error updating post document: ", error);
       });
-
-    //TODO close post, or reload
   };
 
   onChange = e => {

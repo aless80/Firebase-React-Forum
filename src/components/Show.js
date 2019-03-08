@@ -7,20 +7,37 @@ import Comment from "./Comment";
 class Show extends Component {
   state = {
     post: {},
-    key: "",
+    post_key: "",
     showComment: false
   };
 
+  fire_comment = firebase
+    .firestore()
+    .collection("comments")
+    .doc(this.props.match.params.id);
+
+  fire_post = firebase
+    .firestore()
+    .collection("posts")
+    .doc(this.props.match.params.id);
+
+  comment_array = [];
+
   componentDidMount() {
-    const fire_post = firebase
-      .firestore()
-      .collection("posts")
-      .doc(this.props.match.params.id);
-    fire_post.get().then(doc => {
+    this.fire_comment.get().then(doc => {
       if (doc.exists) {
+        this.comment_array = this.doc2array(doc.data());
+      } else {
+        console.log("No such document!");
+      }
+    });
+
+    this.fire_post.get().then(doc => {
+      if (doc.exists) {
+        // Set the state
         this.setState({
           post: doc.data(),
-          key: doc.id,
+          post_key: doc.id,
           isLoading: false
         });
       } else {
@@ -51,14 +68,20 @@ class Show extends Component {
   }
 
   toggleShowComment() {
-    console.log("toggleShowComment");
     const state = this.state;
     state["showComment"] = !state["showComment"];
     this.setState(state);
   }
 
-  getComments() {
-    return [{ id: 1, text: "a" }, { id: 2, text: "b" }];
+  doc2array(comment_array) {
+    var array = [];
+    for (const key in comment_array) {
+      var out = {};
+      out = comment_array[key];
+      out["id"] = key;
+      array.push(out);
+    }
+    return array;
   }
 
   render() {
@@ -70,17 +93,22 @@ class Show extends Component {
             <Link to="/" className="btn btn-default pl-0 border">
               &lt;&lt; Back to Post List
             </Link>
-            <h2 className="panel-title">{this.state.post.title}</h2>
+            <br />
+            <br />
           </div>
           <div className="panel-body">
-            {this.getComments().map(comment => (
-              /*<p key={comment.id}>{comment.text}</p>*/
-              <Comment key={comment.id} text={comment.text}/>
+            <Comment
+              key="0"
+              comment={this.state.post}
+              post_title={this.state.post.title}
+            />
+            {this.comment_array.map(comment => (
+              <Comment
+                key={comment.id}
+                comment={comment}
+                post_title={this.state.post.title}
+              />
             ))}
-
-            <div>{this.state.post.text}</div>
-            <div>{this.state.post.author}</div>
-
             <div>
               {!this.state.showComment && (
                 <button
