@@ -1,0 +1,134 @@
+/*
+        {/*  <div className="message">
+          <div className="image">
+            <img src="http://www.gravatar.com/avatar/df125f7b89730a39163bb17c1c18c1d9?s=18&d=identicon&r=PG" />
+          </div>
+          <div className="user">Silvertiger</div>
+          <div className="hey" />
+          <div className="content">Does this work as expected?</div>
+        </div>
+        <div className="message">
+          <div className="image">
+            <img src="http://www.gravatar.com/avatar/98d247dcb9453a0d5adc70cd6b3acde9?s=18&d=identicon&r=PG" />
+          </div>
+          <div className="user">user2309722</div>
+          <div className="hey" />
+          <div className="content">Indeed sir it appears to, Thank you</div>
+        </div>
+
+        <div id="thread">
+          <div className="thread-post">Post #1 contents</div>
+          <div className="thread-post">Post #2 contents</div>
+          <div className="thread-post">Post #3 contents</div>
+        </div>
+      }
+
+.message {
+  margin-bottom: 15px;
+}
+.image {
+  float: left;
+  margin-right: 10px;
+}
+.user {
+  float: left;
+  font-weight: bold;
+  color: rgb(87, 44, 206);
+  margin-bottom: 5px;
+}
+.content {
+  margin-left: 30px;
+  font-style: italic;
+  color: black;
+}
+
+.hey {
+  clear: both;
+}*/
+
+/*
+.thread-post {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+.thread-post:nth-child(even) {
+  background-color: #eee;
+}
+*/
+
+.page {
+  background: #ffffff;
+  background-color: rgb(255, 255, 255);
+  background-position-x: 0%;
+  background-position-y: 0%;
+  background-repeat: repeat;
+  background-attachment: scroll;
+  background-image: none;
+  background-size: auto;
+  background-origin: padding-box;
+  background-clip: border-box;
+  color: #000000;
+  border: 1px solid #000000;
+}
+.tborder {
+  background: #ffffff;
+  background-color: rgb(255, 255, 255);
+  background-position-x: 0%;
+  background-position-y: 0%;
+  background-repeat: repeat;
+  background-attachment: scroll;
+  background-image: none;
+  background-size: auto;
+  background-origin: padding-box;
+  background-clip: border-box;
+  color: #000000;
+  border: 1px solid #000000;
+}
+th.thead,
+div.thead {
+  padding: 4px;
+}
+.thead {
+  background-image: linear-gradient(
+    to bottom,
+    hsl(157, 90%, 31%),
+    hsl(157, 90%, 51%)
+  );
+  font-size: 11px;
+  font-weight: bold;
+}
+.alt1,
+.alt1Active {
+  /*background: #e6e6e6;*/
+  background: seagreen;
+  color: #000000;
+  font-size: 10pt;
+  padding: 3px;
+}
+.alt2,
+.alt2Active {
+  /*background: #cfd9ff;*/
+  background: hsl(152, 94%, 73%);
+  color: #000000;
+  font-size: 10pt;
+  padding: 3px;
+}
+td {
+  border: 1px solid #ffffff;
+  border-top-color: rgb(255, 255, 255);
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-bottom-color: rgb(255, 255, 255);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-top: 0px;
+  border-bottom: 0px;
+}
+.post-menu {
+  padding-top: 2px;
+  text-align: right;
+}
+.post-menu > a {
+  padding: 0 3px 2px;
+  color: #848d95;
+}

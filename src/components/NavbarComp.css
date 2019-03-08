@@ -1,0 +1,48 @@
+#account_circle {
+    vertical-align: middle;
+    margin: 2px;
+}
+
+
+
+
+#user-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  right: 0;
+  padding-left: 10px;
+  justify-content: flex-end;
+  padding-right: 10px;
+}
+#user-container #user-pic {
+  position: relative;
+  display: inline-block;
+  background-image: url('/images/profile_placeholder.png');
+  background-repeat: no-repeat;
+  width: 40px;
+  height: 40px;
+  background-size: 40px;
+  border-radius: 20px;
+}
+#user-container #user-name {
+  font-size: 16px;
+  line-height: 1.5;
+  padding-right: 10px;
+  padding-left: 20px;
+  
+  color: #fff;
+  font-family: inherit;
+  /*
+  background-color: #6c757d;
+  border-color: #6c757d;*/
+}
+#user-container #sign-out {
+  font-size: 16px;  
+  color: #fff;
+  font-family: inherit;
+  
+  background-color: transparent;
+  border-color: transparent;
+}
+
