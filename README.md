@@ -1,8 +1,12 @@
 
 **WORK IN PROGRESS**
 
-## 
+## Description
 This is a forum website based on Firebase and React. I will add more details later on
+
+## Set up
+Create an account in Firebase with a database. Set up a Database. Find the configuration and place it in a src/Firebase.js file that you create from template:
+```cp src/Firebase_example.js src/Firebase.js```
 
 ## Data structure in Firebase
 ```
