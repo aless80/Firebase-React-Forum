@@ -1,8 +1,24 @@
 import React, { Component } from "react";
-import { getDateObject, getDateTime, timeDifference } from '../Scripts/utilities'
+import {
+  getDateObject,
+  getDateTime,
+  timeDifference
+} from "../Scripts/utilities";
 
 class Comment extends Component {
-
+  profilePicStyle(url) {
+    if (!url) {
+      console.error("Could not find picture url for post");
+      return undefined;
+    }
+    if (
+      url.indexOf("googleusercontent.com") !== -1 &&
+      url.indexOf("?") === -1
+    ) {
+      url = url + "?sz=150";
+    }
+    return { backgroundImage: `url(${url})` };
+  }
   render() {
     const hello = {
       flex: "1 1 100px"
@@ -22,9 +38,9 @@ class Comment extends Component {
                   <tr>
                     <th
                       className="thead font-weight-light border border-right-0"
-                      title={
-                        getDateTime(getDateObject(this.props.comment.timestamp))
-                      }
+                      title={getDateTime(
+                        getDateObject(this.props.comment.timestamp)
+                      )}
                     >
                       {timeDifference(
                         getDateObject(this.props.comment.timestamp)
@@ -65,6 +81,13 @@ class Comment extends Component {
                       </div>
                       <div className="small text-muted">
                         &nbsp;
+                        <div
+                          className="profile-pic"
+                          style={this.profilePicStyle(
+                            this.props.comment.profilePicUrl
+                          )}
+                          title={this.props.comment.author}
+                        />
                         {/*
                           <br />
                           <div>Registered: </div>

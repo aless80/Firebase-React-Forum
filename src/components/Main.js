@@ -1,12 +1,20 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import firebase from "../Firebase";
-import { truncate, getDateObject, getDateTime, timeDifference } from '../Scripts/utilities'
+import {
+  truncate,
+  getDateObject,
+  getDateTime,
+  timeDifference
+} from "../Scripts/utilities";
 
 export const TRUNCATION_LIMIT = 150;
 
 class Main extends Component {
-  fire_posts = firebase.firestore().collection("posts").orderBy("timestamp");
+  fire_posts = firebase
+    .firestore()
+    .collection("posts")
+    .orderBy("timestamp");
   unsubscribe = null;
   state = {
     posts: []
@@ -34,7 +42,7 @@ class Main extends Component {
     this.unsubscribe = this.fire_posts.onSnapshot(this.onCollectionUpdate);
   }
 
-  addSizeToGoogleProfilePic(url) {
+  profilePicStyle(url) {
     if (!url) {
       console.error("Could not find picture url for post");
       return undefined;
@@ -43,13 +51,9 @@ class Main extends Component {
       url.indexOf("googleusercontent.com") !== -1 &&
       url.indexOf("?") === -1
     ) {
-      return url + "?sz=150";
+      url = url + "?sz=150";
     }
-    return url;
-  }
-
-  profilePicStyle(url) {
-    return { backgroundImage: `url(${this.addSizeToGoogleProfilePic(url)})` };
+    return { backgroundImage: `url(${url})` };
   }
 
   render() {
@@ -92,14 +96,8 @@ class Main extends Component {
                         </td>
                         <td>{truncate(post.text, 290)}</td>
                         <td>{post.author}</td>
-                        <td
-                          title={getDateTime(
-                            getDateObject(post.timestamp)
-                          )}
-                        >
-                          {timeDifference(
-                            getDateObject(post.timestamp)
-                          )}
+                        <td title={getDateTime(getDateObject(post.timestamp))}>
+                          {timeDifference(getDateObject(post.timestamp))}
                         </td>
                       </tr>
                     ))}
