@@ -17,12 +17,19 @@ class Comment extends Component {
     ) {
       url = url + "?sz=150";
     }
-    return { backgroundImage: `url(${url})` };
+    return {
+      backgroundImage: `url(${url})`,
+      /* Override size */
+      top: "0px",
+      width: "30px",
+      height: "30px",
+      backgroundSize: "30px",
+      borderRadius: "15px",
+      marginLeft: "0px",
+      padding: "0.0rem"
+    };
   }
   render() {
-    const hello = {
-      flex: "1 1 100px"
-    };
     return (
       <div align="center">
         <div className="comment-page text-left w-100">
@@ -48,9 +55,10 @@ class Comment extends Component {
                     </th>
                     <th className="thead font-weight-strong border border-left-0">
                       <span className="text-left">
-                        {this.props.comment.id>0 && "Re:"} {this.props.post_title}{" "}
+                        {this.props.comment.id > 0 && "Re:"}{" "}
+                        {this.props.post_title}{" "}
                       </span>
-                      {this.props.comment.id>0 && (
+                      {this.props.comment.id > 0 && (
                         <span className="float-right">
                           &nbsp; #
                           <a
@@ -69,37 +77,34 @@ class Comment extends Component {
                 <tbody>
                   <tr className="align-top">
                     <td
-                      className={
-                        "alt" + ((this.props.comment.id % 2) + 1) + " border"
-                      }
+                      className={"alt" + ((this.props.comment.id % 2) + 1)}
                       width="175"
                     >
                       <div id={"postmenu_" + this.props.comment.id}>
                         <div className="font-weight-strong">
-                          {this.props.comment.author}
+                          <strong>{this.props.comment.author}</strong>
                         </div>
                       </div>
-                      <div className="small text-muted">
-                        &nbsp;
-                        <div
-                          className="profile-pic"
-                          style={this.profilePicStyle(
-                            this.props.comment.profilePicUrl
-                          )}
-                          title={this.props.comment.author}
-                        />
-                        {/*
+                      <div
+                        className="profile-pic"
+                        style={this.profilePicStyle(
+                          this.props.comment.profilePicUrl
+                        )}
+                        title={this.props.comment.author}
+                      />
+                      {/*<div className="small text-muted">
                           <br />
                           <div>Registered: </div>
                           <div>Latest activity: </div>
                           Need Admin SDK in priviledge environment
                           https://firebase.google.com/docs/admin/setup                          
-                          */}
-                      </div>
+                        </div>*/}
                     </td>
                     <td
                       className={
-                        "alt" + ((this.props.comment.id % 2) + 1) + " border"
+                        "alt" +
+                        ((this.props.comment.id % 2) + 1) +
+                        " border relative"
                       }
                       id={"td_post_" + this.props.comment.id}
                     >
@@ -107,16 +112,15 @@ class Comment extends Component {
                         {this.props.comment.text}
                       </div>
 
-                      <div className="small text-muted" style={hello}>
-                        <div className="post-menu">
+                      <div className="post-menu small text-muted bottom-right">
+                        <a
+                          href={"/posts/" + this.props.comment.id + "/edit"}
+                          className="suggest-edit-post"
+                        >
+                          edit
+                        </a>
+                        {/*<span>&nbsp;</span>
                           <a
-                            href={"/posts/" + this.props.comment.id + "/edit"}
-                            className="suggest-edit-post"
-                          >
-                            edit
-                          </a>
-                          <span>&nbsp;</span>
-                          {/*<a
                               href="#"
                               className="close-question-link"
                               data-isclosed="false"
@@ -130,7 +134,6 @@ class Comment extends Component {
                             >
                               flag
                             </a>*/}
-                        </div>
                       </div>
                     </td>
                   </tr>

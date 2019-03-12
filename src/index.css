@@ -90,8 +90,9 @@ code {
 }
 .profile-pic {
   position: relative;
+  top: 13px;
   display: inline-block;
-  background-repeat: "no-repeat";
+  background-repeat: no-repeat;
   width: 40px;
   height: 40px;
   background-size: 40px;
@@ -101,6 +102,7 @@ code {
   vertical-align: text-top;
   padding: 0.5rem;
 }
+
 /* Copied stuff I think
 .App {
   text-align: center;
@@ -190,7 +192,7 @@ code {
   background-size: auto;
   background-origin: padding-box;
   background-clip: border-box;
-  color: #000000;
+  /*color: #000000;*/
   border: 1px solid #000000;
 }
 .comment-page .tborder {
@@ -204,7 +206,7 @@ code {
   background-size: auto;
   background-origin: padding-box;
   background-clip: border-box;
-  color: #000000;
+  /*color: #000000;*/
   border: 1px solid #000000;
 }
 .comment-page th.thead,
@@ -218,15 +220,17 @@ div.thead {
 }
 .comment-page .alt1 {
   background: #e0edd3;
-  color: #000000;
+  color: #444c3c;
   font-size: 10pt;
   padding: 3px;
+  border: 1px solid #dee2e6;
 }
 .comment-page .alt2 {
   background: #f6f4d0;
-  color: #000000;
+  color: #444c3c;
   font-size: 10pt;
   padding: 3px;
+  border: 1px solid #dee2e6;
 }
 .comment-page td {
   border: 1px solid #f6f4d0;
@@ -242,8 +246,33 @@ div.thead {
 .comment-page .post-menu {
   padding-top: 2px;
   text-align: right;
+  vertical-align: bottom;
 }
 .comment-page .post-menu > a {
   padding: 0 3px 2px;
   color: #848d95;
+  vertical-align: bottom;
+}
+
+.outer {
+  /*display: table;*/
+  height: 100%;
+}
+.inner {
+  display: table-cell;
+  text-align: right;
+  bottom: 0;
+}
+.relative {
+  position: relative;
+}
+.bottom-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+  text-align: right;
+  vertical-align: bottom;
+}
+.mya {
 }
