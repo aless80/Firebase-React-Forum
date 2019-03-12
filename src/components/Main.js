@@ -44,7 +44,7 @@ class Main extends Component {
 
   profilePicStyle(url) {
     if (!url) {
-      console.error("Could not find picture url for post");
+      //console.error("Could not find picture url for post");
       return undefined;
     }
     if (

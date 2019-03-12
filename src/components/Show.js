@@ -102,7 +102,8 @@ class Show extends Component {
             <div className="panel-body">
               <Comment
                 key="0"
-                comment={this.state.post}
+                comment2={this.state.post}
+                comment={{...this.state.post, ...{'id':0}}}
                 post_title={this.state.post.title}
               />
               {this.comment_array.map(comment => (

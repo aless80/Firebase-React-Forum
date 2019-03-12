@@ -88,7 +88,7 @@ export const truncate = (text, limit) => {
  */
 export const getDateObject = (firebaseTimeStamp) => {
   if (!firebaseTimeStamp) {
-    console.error("Could not find firebaseTimeStamp for post");
+    //console.error("Could not find firebaseTimeStamp for post");
     return "";
   }
   var dateObj = firebaseTimeStamp.toDate();

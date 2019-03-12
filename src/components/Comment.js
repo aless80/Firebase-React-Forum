@@ -48,9 +48,9 @@ class Comment extends Component {
                     </th>
                     <th className="thead font-weight-strong border border-left-0">
                       <span className="text-left">
-                        {this.props.comment.id && "Re:"} {this.props.post_title}{" "}
+                        {this.props.comment.id>0 && "Re:"} {this.props.post_title}{" "}
                       </span>
-                      {this.props.comment.id && (
+                      {this.props.comment.id>0 && (
                         <span className="float-right">
                           &nbsp; #
                           <a
