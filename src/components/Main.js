@@ -17,7 +17,8 @@ class Main extends Component {
     .orderBy("timestamp");
   unsubscribe = null;
   state = {
-    posts: []
+    posts: [],
+    isLoading: true
   };
 
   onCollectionUpdate = querySnapshot => {
@@ -34,7 +35,8 @@ class Main extends Component {
       });
     });
     this.setState({
-      posts
+      posts,
+      isLoading: false
     });
   };
 
@@ -57,6 +59,7 @@ class Main extends Component {
   }
 
   render() {
+    const { isLoading } = this.state;
     return (
       <div className="container">
         <div className="panel panel-default">
@@ -64,46 +67,57 @@ class Main extends Component {
             <h3 className="panel-title">Posts</h3>
           </div>
           <div className="panel-body">
+          {isLoading && (
+                <div className="spinner" /> // render null when app is not ready
+              )}
+              {!isLoading && (
             <div className="table-posts">
-              <table className="table mb-0">
-                <thead>
-                  <tr>
-                    <th>Picture</th>
-                    <th>Title</th>
-                    <th>Text</th>
-                    <th>Author</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.state.posts.length === 0 && (
+              
+                <table className="table mb-0">
+                  <thead>
                     <tr>
-                      <td>No posts</td>
+                      <th>Picture</th>
+                      <th>Title</th>
+                      <th>Text</th>
+                      <th>Author</th>
+                      <th>Date</th>
                     </tr>
-                  )}
-                  {this.state.posts.length > 0 &&
-                    this.state.posts.map((post, i) => (
-                      <tr key={post.key} className={"alt" + ((i % 2) + 1)}>
-                        <td
-                          className="profile-pic"
-                          style={this.profilePicStyle(post.profilePicUrl)}
-                          title={post.author}
-                        />
-                        <td>
-                          <Link to={`/show/${post.key}`} className="post-title">
-                            {post.title}
-                          </Link>
-                        </td>
-                        <td>{truncate(post.text, 290)}</td>
-                        <td>{post.author}</td>
-                        <td title={getDateTime(getDateObject(post.timestamp))}>
-                          {timeDifference(getDateObject(post.timestamp))}
-                        </td>
+                  </thead>
+                  <tbody>
+                    {this.state.posts.length === 0 && (
+                      <tr>
+                        <td>No posts</td>
                       </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
+                    )}
+                    {this.state.posts.length > 0 &&
+                      this.state.posts.map((post, i) => (
+                        <tr key={post.key} className={"alt" + ((i % 2) + 1)}>
+                          <td
+                            className="profile-pic"
+                            style={this.profilePicStyle(post.profilePicUrl)}
+                            title={post.author}
+                          />
+                          <td>
+                            <Link
+                              to={`/show/${post.key}`}
+                              className="post-title"
+                            >
+                              {post.title}
+                            </Link>
+                          </td>
+                          <td>{truncate(post.text, 290)}</td>
+                          <td>{post.author}</td>
+                          <td
+                            title={getDateTime(getDateObject(post.timestamp))}
+                          >
+                            {timeDifference(getDateObject(post.timestamp))}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              
+            </div>)}
             <div>
               <br />
               {/*<button

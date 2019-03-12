@@ -8,7 +8,8 @@ class Show extends Component {
   state = {
     post: {},
     post_key: "",
-    showComment: false
+    showComment: false,
+    isLoading: true
   };
 
   fire_comment = firebase
@@ -73,9 +74,7 @@ class Show extends Component {
   }
 
   reply(id) {
-    //const state = this.state;
     this.toggleShowComment();
-    //this.setState(state);
   }
 
   toggleShowComment() {
@@ -85,6 +84,7 @@ class Show extends Component {
   }
 
   render() {
+    const { isLoading } = this.state;
     return (
       <div className="container">
         <div>
@@ -100,12 +100,16 @@ class Show extends Component {
               <br />
             </div>
             <div className="panel-body">
+              {isLoading && (
+                <div className="spinner" /> // render null when app is not ready
+              )}
+              {!isLoading && (
               <Comment
                 key="0"
                 comment2={this.state.post}
-                comment={{...this.state.post, ...{'id':0}}}
+                comment={{ ...this.state.post, ...{ id: 0 } }}
                 post_title={this.state.post.title}
-              />
+              />)}
               {this.comment_array.map(comment => (
                 <Comment
                   key={comment.id}
