@@ -1,65 +1,7 @@
 import React, { Component } from "react";
+import { getDateObject, getDateTime, timeDifference } from '../Scripts/utilities'
 
 class Comment extends Component {
-  // Helper methods about time
-  getDateObject(firebaseTimeStamp) {
-    if (!firebaseTimeStamp) return "";
-    var dateObj = firebaseTimeStamp.toDate();
-    return new Date(dateObj.getTime() + dateObj.getTimezoneOffset() * 60000);
-  }
-  getDateTime(dateObj) {
-    if (!dateObj) return "";
-    function pad(n) {
-      return n < 10 ? "0" + n : n;
-    }
-    return (
-      pad(dateObj.getDate()) +
-      "-" +
-      pad(dateObj.getMonth()) +
-      "-" +
-      dateObj.getFullYear() +
-      " " +
-      pad(dateObj.getHours()) +
-      ":" +
-      pad(dateObj.getMinutes())
-    );
-  }
-  timeDifference(previous) {
-    if (!previous) return "";
-    var msPerMinute = 60 * 1000;
-    var msPerHour = msPerMinute * 60;
-    var msPerDay = msPerHour * 24;
-    var msPerWeek = msPerDay * 7;
-    var msPerMonth = msPerDay * 30;
-    var msPerYear = msPerDay * 365;
-    const current = Date.now();
-    var elapsed = current - previous;
-    if (elapsed < msPerMinute) {
-      return Math.round(elapsed / 1000) + " seconds ago";
-    } else if (elapsed < msPerHour) {
-      return Math.round(elapsed / msPerMinute) + " minutes ago";
-    } else if (elapsed < msPerHour * 2) {
-      return Math.round(elapsed / msPerHour) + " hour ago";
-    } else if (elapsed < msPerDay) {
-      return Math.round(elapsed / msPerHour) + " hours ago";
-    } else if (elapsed < msPerDay * 2) {
-      return Math.round(elapsed / msPerDay) + " day ago";
-    } else if (elapsed < msPerWeek * 2) {
-      return Math.round(elapsed / msPerDay) + " days ago";
-    } else if (elapsed < msPerMonth) {
-      return Math.round(elapsed / msPerWeek) + " weeks ago";
-    } else if (elapsed < msPerMonth * 2) {
-      return Math.round(elapsed / msPerMonth) + " month ago";
-    } else if (elapsed < msPerYear) {
-      return Math.round(elapsed / msPerMonth) + " months ago";
-    } /*else if (elapsed < msPerYear * 2) {
-      return Math.round(elapsed / msPerYear) + " year ago";
-    } else {
-      return Math.round(elapsed / msPerYear) + " years ago";
-    }*/ else {
-      return this.getDateTime(previous);
-    }
-  }
 
   render() {
     const hello = {
@@ -81,11 +23,11 @@ class Comment extends Component {
                     <th
                       className="thead font-weight-light border border-right-0"
                       title={
-                        this.getDateTime(this.getDateObject(this.props.comment.timestamp))
+                        getDateTime(getDateObject(this.props.comment.timestamp))
                       }
                     >
-                      {this.timeDifference(
-                        this.getDateObject(this.props.comment.timestamp)
+                      {timeDifference(
+                        getDateObject(this.props.comment.timestamp)
                       )}
                     </th>
                     <th className="thead font-weight-strong border border-left-0">
