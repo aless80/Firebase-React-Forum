@@ -91,8 +91,10 @@ class Show extends Component {
           <div className="panel panel-default">
             <br />
             <div className="panel-heading">
-              <Link to="/" className="btn btn-default pl-0 border">
-                &lt;&lt; Back to Post List
+              <Link to="/">
+                <button className="btn btn-bgn ml-0">
+                  &lt;&lt; Back to Post List
+                </button>
               </Link>
               <br />
               <br />
