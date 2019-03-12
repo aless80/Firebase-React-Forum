@@ -51,13 +51,18 @@ class Main extends Component {
   profilePicStyle(url) {
     return { backgroundImage: `url(${this.addSizeToGoogleProfilePic(url)})` };
   }
-  getDateTime(firebaseTimeStamp) {
+
+  // Helper methods about time
+  getDateObject(firebaseTimeStamp) {
+    if (!firebaseTimeStamp) return "";
     if (!firebaseTimeStamp) {
       console.error("Could not find firebaseTimeStamp for post");
       return undefined;
     }
     var dateObj = firebaseTimeStamp.toDate();
-    dateObj = new Date(dateObj.getTime() + dateObj.getTimezoneOffset() * 60000);
+    return new Date(dateObj.getTime() + dateObj.getTimezoneOffset() * 60000);
+  }
+  getDateTime(dateObj) {
     function pad(n) {
       return n < 10 ? "0" + n : n;
     }
@@ -72,6 +77,41 @@ class Main extends Component {
       ":" +
       pad(dateObj.getMinutes())
     );
+  }
+  timeDifference(previous) {
+    var msPerMinute = 60 * 1000;
+    var msPerHour = msPerMinute * 60;
+    var msPerDay = msPerHour * 24;
+    var msPerWeek = msPerDay * 7;
+    var msPerMonth = msPerDay * 30;
+    var msPerYear = msPerDay * 365;
+    const current = Date.now();
+    var elapsed = current - previous;
+    if (elapsed < msPerMinute) {
+      return Math.round(elapsed / 1000) + " seconds ago";
+    } else if (elapsed < msPerHour) {
+      return Math.round(elapsed / msPerMinute) + " minutes ago";
+    } else if (elapsed < msPerHour * 2) {
+      return Math.round(elapsed / msPerHour) + " hour ago";
+    } else if (elapsed < msPerDay) {
+      return Math.round(elapsed / msPerHour) + " hours ago";
+    } else if (elapsed < msPerDay * 2) {
+      return Math.round(elapsed / msPerDay) + " day ago";
+    } else if (elapsed < msPerWeek * 2) {
+      return Math.round(elapsed / msPerDay) + " days ago";
+    } else if (elapsed < msPerMonth) {
+      return Math.round(elapsed / msPerWeek) + " weeks ago";
+    } else if (elapsed < msPerMonth * 2) {
+      return Math.round(elapsed / msPerMonth) + " month ago";
+    } else if (elapsed < msPerYear) {
+      return Math.round(elapsed / msPerMonth) + " months ago";
+    } /*else if (elapsed < msPerYear * 2) {
+      return Math.round(elapsed / msPerYear) + " year ago";
+    } else {
+      return Math.round(elapsed / msPerYear) + " years ago";
+    }*/ else {
+      return this.getDateTime(previous);
+    }
   }
 
   render() {
@@ -114,7 +154,15 @@ class Main extends Component {
                         </td>
                         <td>{post.text}</td>
                         <td>{post.author}</td>
-                        <td>{this.getDateTime(post.timestamp)} </td>
+                        <td
+                          title={this.getDateTime(
+                            this.getDateObject(post.timestamp)
+                          )}
+                        >
+                          {this.timeDifference(
+                            this.getDateObject(post.timestamp)
+                          )}
+                        </td>
                       </tr>
                     ))}
                 </tbody>

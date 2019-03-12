@@ -22,15 +22,6 @@ post: {
     ...
   }
 }
-members: {
-  "AA4aQdp_post_key": {
-    "Alessandro Marin": true,
-    "Johnn Doe": true
-  },
-  "BB5bQhf_post_key": {
-    ..
-  }
-}
 
 comments: {
   "AA4aQdp_post_key": {
@@ -51,6 +42,17 @@ comments: {
     ..
   }
 }
+
+members: {
+  "AA4aQdp_post_key": {
+    "Alessandro Marin": true,
+    "Johnn Doe": true
+  },
+  "BB5bQhf_post_key": {
+    ..
+  }
+}
+
 ```
 
 
