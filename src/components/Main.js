@@ -41,7 +41,11 @@ class Main extends Component {
   };
 
   componentDidMount() {
+    //Get the posts now
     this.unsubscribe = this.fire_posts.onSnapshot(this.onCollectionUpdate);
+  }
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   profilePicStyle(url) {
