@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import firebase from "../Firebase";
 
-class CreateReply extends Component {
+class Reply extends Component {
   state = {
     comment_key: "",
     post_key: "",
@@ -133,12 +133,12 @@ class CreateReply extends Component {
               />
             </div>
             <div>
-              <button type="submit" className="btn btn-dark">
+              <button type="submit" className="btn btn-bgn">
                 Submit
               </button>
               <button
                 type="submit"
-                className="btn btn-dark ml-1"
+                className="btn btn-bgn ml-1"
                 onClick={() => this.props.toggleShowComment()}
               >
                 Cancel
@@ -151,4 +151,4 @@ class CreateReply extends Component {
   }
 }
 
-export default CreateReply;
+export default Reply;

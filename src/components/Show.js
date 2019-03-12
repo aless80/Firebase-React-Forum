@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import firebase from "../Firebase";
 import { Link } from "react-router-dom";
-import CreateReply from "./CreateReply";
+import Reply from "./Reply";
 import Comment from "./Comment";
 
 class Show extends Component {
@@ -61,6 +61,17 @@ class Show extends Component {
       });
   }*/
 
+  doc2array(comment_array) {
+    var array = [];
+    for (const key in comment_array) {
+      var out = {};
+      out = comment_array[key];
+      out["id"] = key;
+      array.push(out);
+    }
+    return array;
+  }
+
   reply(id) {
     //const state = this.state;
     this.toggleShowComment();
@@ -73,63 +84,55 @@ class Show extends Component {
     this.setState(state);
   }
 
-  doc2array(comment_array) {
-    var array = [];
-    for (const key in comment_array) {
-      var out = {};
-      out = comment_array[key];
-      out["id"] = key;
-      array.push(out);
-    }
-    return array;
-  }
-
   render() {
     return (
       <div className="container">
-        <div className="panel panel-default">
-          <br />
-          <div className="panel-heading">
-            <Link to="/" className="btn btn-default pl-0 border">
-              &lt;&lt; Back to Post List
-            </Link>
+        <div>
+          <div className="panel panel-default">
             <br />
-            <br />
-          </div>
-          <div className="panel-body">
-            <Comment
-              key="0"
-              comment={this.state.post}
-              post_title={this.state.post.title}
-            />
-            {this.comment_array.map(comment => (
+            <div className="panel-heading">
+              <Link to="/" className="btn btn-default pl-0 border">
+                &lt;&lt; Back to Post List
+              </Link>
+              <br />
+              <br />
+            </div>
+            <div className="panel-body">
               <Comment
-                key={comment.id}
-                comment={comment}
+                key="0"
+                comment={this.state.post}
                 post_title={this.state.post.title}
               />
-            ))}
-            <div>
-              {!this.state.showComment && (
-                <button
-                  onClick={() => this.reply(this.state.key)}
-                  className="btn btn-dark ml-1"
-                >
-                  Reply
-                </button>
-              )}
+              {this.comment_array.map(comment => (
+                <Comment
+                  key={comment.id}
+                  comment={comment}
+                  post_title={this.state.post.title}
+                />
+              ))}
+              <div>
+                {!this.state.showComment && (
+                  <button
+                    onClick={() => this.reply(this.state.key)}
+                    className="btn btn-bgn ml-0"
+                  >
+                    Reply
+                  </button>
+                )}
+              </div>
             </div>
+            <div className="panel-footer" />
           </div>
-          <div className="panel-footer" />
         </div>
         <br />
-
-        {this.state.showComment && (
-          <CreateReply
-            post_key={this.props.match.params.id}
-            toggleShowComment={() => this.toggleShowComment()}
-          />
-        )}
+        <div>
+          {this.state.showComment && (
+            <Reply
+              post_key={this.props.match.params.id}
+              toggleShowComment={() => this.toggleShowComment()}
+            />
+          )}
+        </div>
       </div>
     );
   }

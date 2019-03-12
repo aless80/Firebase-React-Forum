@@ -6,7 +6,7 @@ import Main from "./components/Main";
 import Edit from "./components/Edit";
 import Create from "./components/Create";
 import Show from "./components/Show";
-import NavbarComp from "./components/NavbarComp";
+import Navbar from "./components/Navbar";
 
 export default class App extends Component {
   state = {
@@ -21,7 +21,7 @@ export default class App extends Component {
     return (
       <BrowserRouter>
         <div>
-          <NavbarComp setuserCallback={this.setUser} />
+          <Navbar setuserCallback={this.setUser} />
           <main className="mdl-layout__content mdl-color--grey-100">
             <Route exact path="/" component={Main} />
             <Route exact path="/edit/:id" render={(props) => <Edit {...props} user={this.state.user} />} />

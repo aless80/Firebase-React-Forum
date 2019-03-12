@@ -6,9 +6,244 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #e4ffc9;
+  color: #444c3c;
+}
+.btn-bgn {
+  background-image: linear-gradient(to bottom, #5a684b, #7d9169);
+  color: #fff;
+}
+.table-posts thead tr {
+  color: #fff;
+  font-weight: normal;
+}
+.table-posts th {
+  border-top: 0;
+  padding: 0.5rem;
+}
+.table-posts tr {
+  border-top-color: #ffffff;
+  border-bottom-color: #608f00;
+  color: #444c3c;
+  border-top: 1px solid transparent;
+  border-top-color: transparent;
+  border-bottom: 1px solid green;
+  border-bottom-color: green;
+}
+.table-posts td {
+  border-top: 0;
+}
+tbody tr:hover {
+  background-color: #f6f4d0;
+}
+
+.table a {
+  color: #444c3c;
+}
+.table a {
+  font-weight: bold;
+}
+.table a:hover {
+  color: #000000;
+}
+
+.table-posts {
+  background-color: #59674b;
+  background-image: linear-gradient(
+    to bottom,
+    #b5c1a9 0%,
+    #7f936b 2px,
+    #59674b 100%
+  );
+  background-repeat: repeat-x;
+}
+.table-posts {
+  margin-bottom: 4px;
+  padding: 5px;
+  clear: both;
+  border-radius: 7px;
+}
+
+.post-title:hover {
+  text-decoration: underline;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: currentcolor;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+/* eg Reply component */
+.form-control {
+  background: #f6f4d0;
+}
+
+/* Main component*/
+.alt1 {
+  background: #e0edd3;
+}
+.alt2 {
+  background: #ffffff;
+}
+.profile-pic {
+  position: relative;
+  display: inline-block;
+  background-repeat: "no-repeat";
+  width: 40px;
+  height: 40px;
+  background-size: 40px;
+  border-radius: 20px;
+  margin-left: 10px;
+  margin-right: auto;
+  vertical-align: text-top;
+  padding: 0.5rem;
+}
+/* Copied stuff I think
+.App {
+  text-align: center;
+}
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+  pointer-events: none;
+}
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+.App-link {
+  color: #61dafb;
+}
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+*/
+
+/* Navbar component */
+.navbar {
+  /*background-color: #677857;*/
+  background-image: linear-gradient(to bottom, #5a684b, #7d9169);
+}
+
+#account_circle {
+  vertical-align: middle;
+  margin: 2px;
+}
+#user-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  right: 0;
+  padding-left: 10px;
+  justify-content: flex-end;
+  padding-right: 10px;
+}
+#user-container #user-pic {
+  position: relative;
+  display: inline-block;
+  background-image: url("/images/profile_placeholder.png");
+  background-repeat: no-repeat;
+  width: 40px;
+  height: 40px;
+  background-size: 40px;
+  border-radius: 20px;
+}
+#user-container #user-name {
+  font-size: 16px;
+  line-height: 1.5;
+  padding-right: 10px;
+  padding-left: 20px;
+  color: #fff;
+  font-family: inherit;
+}
+#user-container #sign-out {
+  font-size: 16px;
+  color: #fff;
+  font-family: inherit;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+/* Comment component*/
+.comment-page {
+  background: #ffffff;
+  background-color: rgb(255, 255, 255);
+  background-position-x: 0%;
+  background-position-y: 0%;
+  background-repeat: repeat;
+  background-attachment: scroll;
+  background-image: none;
+  background-size: auto;
+  background-origin: padding-box;
+  background-clip: border-box;
+  color: #000000;
+  border: 1px solid #000000;
+}
+.comment-page .tborder {
+  background: #ffffff;
+  background-color: rgb(255, 255, 255);
+  background-position-x: 0%;
+  background-position-y: 0%;
+  background-repeat: repeat;
+  background-attachment: scroll;
+  background-image: none;
+  background-size: auto;
+  background-origin: padding-box;
+  background-clip: border-box;
+  color: #000000;
+  border: 1px solid #000000;
+}
+.comment-page th.thead,
+div.thead {
+  padding: 4px;
+}
+.comment-page .thead {
+  background-image: linear-gradient(to bottom, #90aa75, #c4dcab);
+  font-size: 11px;
+  font-weight: bold;
+}
+.comment-page .alt1 {
+  background: #e0edd3;
+  color: #000000;
+  font-size: 10pt;
+  padding: 3px;
+}
+.comment-page .alt2 {
+  background: #f6f4d0;
+  color: #000000;
+  font-size: 10pt;
+  padding: 3px;
+}
+.comment-page td {
+  border: 1px solid #f6f4d0;
+  border-top-color: rgb(255, 255, 255);
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-bottom-color: rgb(255, 255, 255);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-top: 0px;
+  border-bottom: 0px;
+}
+.comment-page .post-menu {
+  padding-top: 2px;
+  text-align: right;
+}
+.comment-page .post-menu > a {
+  padding: 0 3px 2px;
+  color: #848d95;
 }

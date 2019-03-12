@@ -85,10 +85,10 @@ class Create extends Component {
                 />
               </div>
               <div>
-                <button type="submit" className="btn btn-dark">
+                <button type="submit" className="btn btn-bgn">
                   Submit
                 </button>
-                <Link to="/" className="btn btn-dark ml-1">
+                <Link to="/" className="btn btn-bgn ml-1">
                   Cancel
                 </Link>
               </div>

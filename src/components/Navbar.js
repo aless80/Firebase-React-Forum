@@ -3,7 +3,7 @@ import firebase from "../Firebase";
 import MaterialIcon from "material-icons-react";
 import {
   Collapse,
-  Navbar,
+  Navbar as Navbarstrap,
   NavbarToggler,
   NavbarBrand,
   Nav,
@@ -14,9 +14,8 @@ import {
   DropdownMenu,
   DropdownItem*/
 } from "reactstrap";
-import "./NavbarComp.css";
 
-export default class NavbarComp extends Component {
+export default class Navbar extends Component {
   state = {
     isOpen: false
   };
@@ -25,7 +24,6 @@ export default class NavbarComp extends Component {
     this.setState({
       isOpen: !this.state.isOpen
     });
-    alert("here");
   };
 
   componentDidMount() {
@@ -47,7 +45,7 @@ export default class NavbarComp extends Component {
   render() {
     return (
       <div>
-        <Navbar color="navbar navbar-dark bg-dark" expand="md">
+        <Navbarstrap color="navbar navbar-dark" expand="md">
           <NavbarBrand href="/">Board Game Nerd</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
@@ -85,7 +83,7 @@ export default class NavbarComp extends Component {
               </UncontrolledDropdown>*/}
             </Nav>
           </Collapse>
-        </Navbar>
+        </Navbarstrap>
       </div>
     );
   }

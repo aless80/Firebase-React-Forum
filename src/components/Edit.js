@@ -95,12 +95,12 @@ class Edit extends Component {
                 />
               </div>
               <div>
-                <button type="submit" className="btn btn-dark">
+                <button type="submit" className="btn btn-bgn">
                   Submit
                 </button>
                 <Link
                   to={`/show/${this.state.key}`}
-                  className="btn btn-dark ml-1"
+                  className="btn btn-bgn ml-1"
                 >
                   Cancel
                 </Link>
