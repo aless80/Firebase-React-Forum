@@ -8,7 +8,7 @@ import {
   timeDifference
 } from "../Scripts/utilities";
 
-export const TRUNCATION_LIMIT = 150;
+export const TRUNCATION_LIMIT = 290;
 
 class Main extends Component {
   fire_posts = firebase
@@ -109,7 +109,7 @@ class Main extends Component {
                               {post.title}
                             </Link>
                           </td>
-                          <td>{truncate(post.text, 290)}</td>
+                          <td>{truncate(post.text, TRUNCATION_LIMIT)}</td>
                           <td>{post.author}</td>
                           <td
                             title={getDateTime(getDateObject(post.timestamp))}

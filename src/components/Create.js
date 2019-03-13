@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-//import ReactDOM from 'react-dom';
 import firebase from "../Firebase";
 import { Link } from "react-router-dom";
+//import TextEditor from "./TextEditor";
+//import TextEditor2 from "./TextEditor2";
 
 class Create extends Component {
   fire_posts = firebase.firestore().collection("posts");
@@ -38,7 +39,7 @@ class Create extends Component {
         comments: 0,
         profilePicUrl: this.getProfilePicUrl(),
         title: title,
-        text: text,        
+        text: text,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       })
       .then(docRef => {
@@ -51,6 +52,10 @@ class Create extends Component {
       .catch(error => {
         console.error("Error adding document: ", error);
       });
+  };
+
+  myCallback = dataFromChild => {
+    console.log(" dataFromChild:", dataFromChild);
   };
 
   render() {
@@ -83,6 +88,15 @@ class Create extends Component {
                   rows="4"
                   value={text}
                 />
+
+                {/*<br />
+                <div className="border border-dark">
+                  <TextEditor2/>
+                </div>
+                <br />
+                <div className="border border-dark">
+                  <TextEditor callbackFromParent={this.myCallback} />
+                </div>*/}
               </div>
               <div>
                 <button type="submit" className="btn btn-bgn">
