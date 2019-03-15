@@ -2,12 +2,11 @@ import { Editor } from "slate-react";
 import { Value } from "slate";
 
 import React from "react";
-import initialValue from "./value.json";
+//import initialValue from "./value.json";
 import { isKeyHotkey } from "is-hotkey";
 import { Button, Icon, Toolbar } from "../components";
 //import Plain from 'slate-plain-serializer'
-
-/// Serialize to html
+// Serialize to html
 import Html from "slate-html-serializer";
 
 const rules = [
@@ -101,8 +100,6 @@ const html = new Html({ rules });
 //
 
 
-
-
 class TextEditor extends React.Component {
   /**
    * On change, save the new `value`.
@@ -110,20 +107,25 @@ class TextEditor extends React.Component {
    * @param {Editor} editor
    */
   onChange = ({ value }) => {
-    //this.setState({ value });
-
     //console.log('Plain.serialize(value): ', Plain.serialize(value))
-    //console.log('JSON.stringify(value.toJSON()): ',JSON.stringify(value.toJSON(), null, 4))
     //if (value.document != this.state.value.document) {
     //console.log('value.document is a mess:', value.document)
+    
+    // Print Slate json
+    console.log('JSON.stringify(value.toJSON()): ',JSON.stringify(value.toJSON(), null, 4))
+    // Show HTML of serialized Slate json
     var valueHtml = html.serialize(this.state.value)
     console.log('valueHtml:', valueHtml)
+    // Set state
     this.setState({ value, valueHtml });
     
-    
-
+    html.deserialize("<p>try deserialize</p>")
+    console.log("html.deserialize",html.deserialize("<p>try deserialize</p>"))
     //}
   };
+
+  // Deserialize (convert HTML string to Slate object) initialValue prop from parent
+  initialValue = html.deserialize(this.props.initialValue);
 
   /**
    * Deserialize the initial editor value.
@@ -131,8 +133,8 @@ class TextEditor extends React.Component {
    * @type {Object}
    */
   state = {
-    value: Value.fromJSON(initialValue),
-    valueHtml: html.serialize(Value.fromJSON(initialValue))
+    value: Value.fromJSON(this.initialValue),
+    valueHtml: html.serialize(Value.fromJSON(this.initialValue))
   };
 
   /**
@@ -174,20 +176,9 @@ class TextEditor extends React.Component {
           
         </div>
         <div className="resizable grippie bbr-sm mr-0"></div>
-      {/*<Button onClick={
-        this.props.onSubmit(html.serialize(this.state.value)) 
-        }>
-        Submit
-      </Button>
-      */}
       </div>
     );
   }
-
-  test(){
-  console.log('html.serialize(this.state.value):', html.serialize(this.state.valueHtml))
-  this.props.callbackFromParent(html.serialize(this.state.valueHtml))
-}
 
 /*componentWillReceiveProps(props) {
   const { parentProp } = this.props;
@@ -245,7 +236,7 @@ class TextEditor extends React.Component {
   };
 
   /**
-   * Serialize: Render a Slate node/block.
+   * Deserialize: Render a Slate node/block.
    *
    * @param {Object} props
    * @return {Element}

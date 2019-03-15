@@ -7,9 +7,12 @@ class Create extends Component {
   fire_posts = firebase.firestore().collection("posts");
   state = {
     title: "",
-    text: ""
+    text: "",
+    richText: ""
   };
+  refEditor = React.createRef();
 
+  // Change title
   onChange = e => {
     const state = this.state;
     state[e.target.name] = e.target.value;
@@ -27,14 +30,12 @@ class Create extends Component {
       firebase.auth().currentUser.photoURL || "/images/profile_placeholder.png"
     );
   }
-
+  
   onSubmit = e => {
-    getRichHTML(e) {
-      console.log(this.FieldEditor1.current.state.valueHtml)
-    }
-    this.getRichHTML()
-    FieldEditor1 = React.createRef();
-    
+    // Get the rich text (I mean a string with HTML code) from the reference to TextEditor
+    var richText = this.refEditor.current.state.valueHtml;
+    this.setState({...this.state, richText: richText})
+    // Send to Firebase
     e.preventDefault();
     const { title, text } = this.state;
     var author = this.getUserName();
@@ -45,13 +46,16 @@ class Create extends Component {
         profilePicUrl: this.getProfilePicUrl(),
         title: title,
         text: text,
+        richText: richText,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       })
       .then(docRef => {
         this.setState({
           title: "",
-          text: ""
+          text: "",
+          richText: richText
         });
+        // TODO
         this.props.history.push("/");
       })
       .catch(error => {
@@ -61,7 +65,7 @@ class Create extends Component {
 
 
   render() {
-    const { title, text } = this.state;
+    const { title, text, richText } = this.state;
     return (
       <div className="container">
         <div className="panel panel-default">
@@ -93,7 +97,7 @@ class Create extends Component {
 
                 <br />
                 <div className="border border-dark">
-                  <TextEditor ref={this.FieldEditor1}/>
+                  <TextEditor ref={this.refEditor} initialValue={richText} />
                 </div>
               </div>
               <div>
