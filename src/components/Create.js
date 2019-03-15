@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import firebase from "../Firebase";
 import { Link } from "react-router-dom";
-//import TextEditor from "./TextEditor";
-//import TextEditor2 from "./TextEditor2";
+import TextEditor from "./TextEditor";
 
 class Create extends Component {
   fire_posts = firebase.firestore().collection("posts");
@@ -30,6 +29,12 @@ class Create extends Component {
   }
 
   onSubmit = e => {
+    getRichHTML(e) {
+      console.log(this.FieldEditor1.current.state.valueHtml)
+    }
+    this.getRichHTML()
+    FieldEditor1 = React.createRef();
+    
     e.preventDefault();
     const { title, text } = this.state;
     var author = this.getUserName();
@@ -54,9 +59,6 @@ class Create extends Component {
       });
   };
 
-  myCallback = dataFromChild => {
-    console.log(" dataFromChild:", dataFromChild);
-  };
 
   render() {
     const { title, text } = this.state;
@@ -89,14 +91,10 @@ class Create extends Component {
                   value={text}
                 />
 
-                {/*<br />
-                <div className="border border-dark">
-                  <TextEditor2/>
-                </div>
                 <br />
                 <div className="border border-dark">
-                  <TextEditor callbackFromParent={this.myCallback} />
-                </div>*/}
+                  <TextEditor ref={this.FieldEditor1}/>
+                </div>
               </div>
               <div>
                 <button type="submit" className="btn btn-bgn">
