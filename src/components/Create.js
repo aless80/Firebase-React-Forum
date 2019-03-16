@@ -3,12 +3,9 @@ import firebase from "../Firebase";
 import { Link } from "react-router-dom";
 import TextEditor from "./TextEditor";
 
-// TODO: ensure user is logged in
 class Create extends Component {
   state = {
-    title: "",
-    //plainText: "", //TODO: I think plainText and richText should go away
-    //richText: ""
+    title: ""
   };
   fire_posts = firebase.firestore().collection("posts");
   fire_comment_coll = firebase
@@ -95,14 +92,8 @@ class Create extends Component {
             console.error("Error on getting document: ", error);
             return;
         });
-
-
-
-        // TODO needed?
         this.setState({
           title: "",
-          //plainText: "",
-          //richText: ""
         });
         // TODO
         this.props.history.push("/");
@@ -134,17 +125,6 @@ class Create extends Component {
                 />
               </div>
               <div className="form-group">
-                {/*<textarea
-                  className="form-control"
-                  name="text"
-                  onChange={this.onChange}
-                  placeholder="Your text"
-                  cols="80"
-                  rows="4"
-                  value={plainText}
-                />
-
-                <br />*/}
                 <div className="border border-dark">
                   <TextEditor ref={this.refEditor} initialRichText={this.initialRichText} />
                 </div>
