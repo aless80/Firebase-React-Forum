@@ -89,16 +89,14 @@ export default class Navbar extends Component {
   }
 }
 
-//var signInButtonElement = document.getElementById('sign-in');
-//signInButtonElement.addEventListener('click', signIn);
-// Signs-in Friendly Chat.
+// Signs-in in application.
 function signIn() {
   // Sign in Firebase using popup auth and Google as the identity provider.
   var provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithPopup(provider);
 }
 
-// Signs-out of Friendly Chat.
+// Signs-out of application.
 function signOut() {
   // Sign out of Firebase.
   firebase.auth().signOut();
