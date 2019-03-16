@@ -103,6 +103,15 @@ class TextEditor extends React.Component {
    * @type {Object}
    */
   initialModel = html.deserialize(this.props.initialRichText);
+  
+  /**
+   * Store a reference to the `editor`.
+   *
+   * @param {Editor} editor
+   */
+  ref = editor => {
+    this.editor = editor;
+  };
 
   /**
    * State: serialize the initial editor value.
