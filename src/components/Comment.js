@@ -108,8 +108,7 @@ class Comment extends Component {
                       }
                       id={"td_post_" + this.props.comment.id}
                     >
-                      <div id={"post_message_" + this.props.comment.id}>
-                        {this.props.comment.text}
+                      <div id={"post_message_" + this.props.comment.id} dangerouslySetInnerHTML={{ __html: this.props.comment.richText }}>
                       </div>
 
                       <div className="post-menu small text-muted bottom-right">

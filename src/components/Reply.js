@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import firebase from "../Firebase";
+import TextEditor from "./TextEditor";
 
 class Reply extends Component {
   state = {
     comment_key: "",
-    post_key: "",
-    text: ""
+    //post_key: ""
   };
   fire_post = firebase
     .firestore()
@@ -15,6 +15,8 @@ class Reply extends Component {
     .firestore()
     .collection("comments")
     .doc(this.props.post_key);
+  refEditor = React.createRef();
+  initialRichText = "<p></p>" // this is rich text (I mean a string with HTML code)
 
   componentDidMount() {
     this.fire_post.get().then(doc => {
@@ -23,7 +25,7 @@ class Reply extends Component {
           post: doc.data(),
           post_key: doc.id,
           comment_key: doc.data().comments + 1,
-          text: "",
+          richText: "",
           isLoading: false
         });
       } else {
@@ -34,11 +36,12 @@ class Reply extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const { comment_key, text } = this.state;
+    const { comment_key } = this.state;
+    var richText = this.refEditor.current.state.valueHtml;
     var data = {
       author: this.getUserName(),
       profilePicUrl: this.getProfilePicUrl(),
-      text: text,
+      richText: richText,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     };
 
@@ -96,11 +99,11 @@ class Reply extends Component {
       });
   };
 
-  onChange = e => {
+  /*onChange = e => {
     const state = this.state;
     state[e.target.name] = e.target.value;
     this.setState(state);
-  };
+  };*/
 
   // Returns the signed-in user's display name.
   getUserName() {
@@ -115,22 +118,19 @@ class Reply extends Component {
   }
 
   render() {
-    const { text } = this.state;
+    //const { richText } = this.state;
     return (
       <div className="panel panel-default">
         <div className="panel-heading" />
         <div className="panel-body">
           <form onSubmit={this.onSubmit}>
             <div className="form-group">
-              <textarea
-                className="form-control"
-                name="text"
-                onChange={this.onChange}
-                placeholder="Your text"
-                cols="80"
-                rows="4"
-                value={text}
-              />
+              <div className="border border-dark">
+                <TextEditor
+                  ref={this.refEditor}
+                  initialRichText={this.initialRichText}
+                />
+              </div>
             </div>
             <div>
               <button type="submit" className="btn btn-bgn">

@@ -24,11 +24,11 @@ class Main extends Component {
   onCollectionUpdate = querySnapshot => {
     const posts = [];
     querySnapshot.forEach(doc => {
-      const { title, text, author, profilePicUrl, timestamp } = doc.data();
+      const { title, plainText, author, profilePicUrl, timestamp } = doc.data();
       posts.push({
         key: doc.id,
         title,
-        text,
+        plainText,
         author,
         profilePicUrl,
         timestamp
@@ -62,6 +62,8 @@ class Main extends Component {
     return { backgroundImage: `url(${url})` };
   }
 
+  // TODO: with one single post the picture goes out of table
+  // TODO: bad css when "No posts": hover changes color and green border on bottom
   render() {
     const { isLoading } = this.state;
     return (
@@ -109,7 +111,7 @@ class Main extends Component {
                               {post.title}
                             </Link>
                           </td>
-                          <td>{truncate(post.text, TRUNCATION_LIMIT)}</td>
+                          <td>{truncate(post.plainText, TRUNCATION_LIMIT)}</td>
                           <td>{post.author}</td>
                           <td
                             title={getDateTime(getDateObject(post.timestamp))}

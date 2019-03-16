@@ -1,12 +1,9 @@
 import { Editor } from "slate-react";
 import { Value } from "slate";
-
 import React from "react";
-//import initialValue from "./value.json";
 import { isKeyHotkey } from "is-hotkey";
 import { Button, Icon, Toolbar } from "../components";
-//import Plain from 'slate-plain-serializer'
-// Serialize to html
+import Plain from "slate-plain-serializer";
 import Html from "slate-html-serializer";
 
 const rules = [
@@ -23,10 +20,8 @@ const rules = [
         li: "list-item",
         ol: "numbered-list"
       };
-      /* TODO if useful handle attributes as in renderNode below eg
-        return <blockquote {...attributes}>{children}</blockquote>; */
       const type = BLOCK_TAGS[el.tagName.toLowerCase()];
-console.log('deserialize type:', type)
+      //console.log('deserialize type:', type)
       if (type) {
         return {
           object: "block",
@@ -36,11 +31,10 @@ console.log('deserialize type:', type)
         };
       }
     },
-
     /* serialize == convert Slate model to DOM*/
     serialize(obj, children) {
       if (obj.object === "block") {
-console.log('serialize obj.type:', obj.type)
+        //console.log('serialize obj.type:', obj.type)
         switch (obj.type) {
           case "code":
             return (
@@ -53,7 +47,10 @@ console.log('serialize obj.type:', obj.type)
           case "block-quote":
             return <blockquote>{children}</blockquote>;
           default:
-            console.error('serialize block on default case. obj.type=',obj.type)
+            console.error(
+              "serialize block on default case. obj.type=",
+              obj.type
+            );
         }
       }
     }
@@ -75,8 +72,6 @@ console.log('serialize obj.type:', obj.type)
         };
       }
     },
-    /* TODO rendermark below uses attributes as well: 
-      return <code {...attributes}>{children}</code>;*/
     serialize(obj, children) {
       if (obj.object === "mark") {
         switch (obj.type) {
@@ -87,71 +82,47 @@ console.log('serialize obj.type:', obj.type)
           case "underline":
             return <u>{children}</u>;
           default:
-            console.error('serialize mark on default case. obj.type=',obj.type)
+            console.error(
+              "serialize mark on default case. obj.type=",
+              obj.type
+            );
         }
       }
     }
   }
 ];
-// Create a new serializer instance with our `rules` from above.
+
+// Create a new serializer instance with our 'rules'
 const html = new Html({ rules });
-//
-//
-//
 
 
 class TextEditor extends React.Component {
   /**
-   * On change, save the new `value`.
+   * Deserialize (convert HTML string to Slate object) initialModel prop from parent
    *
-   * @param {Editor} editor
+   * @type {Object}
    */
-  onChange = ({ value }) => {
-    //console.log('Plain.serialize(value): ', Plain.serialize(value))
-    //if (value.document != this.state.value.document) {
-    //console.log('value.document is a mess:', value.document)
-    
-    // Print Slate json
-    console.log('JSON.stringify(value.toJSON()): ',JSON.stringify(value.toJSON(), null, 4))
-    // Show HTML of serialized Slate json
-    var valueHtml = html.serialize(this.state.value)
-    console.log('valueHtml:', valueHtml)
-    // Set state
-    this.setState({ value, valueHtml });
-    
-    html.deserialize("<p>try deserialize</p>")
-    console.log("html.deserialize",html.deserialize("<p>try deserialize</p>"))
-    //}
-  };
-
-  // Deserialize (convert HTML string to Slate object) initialValue prop from parent
-  initialValue = html.deserialize(this.props.initialValue);
+  initialModel = html.deserialize(this.props.initialRichText);
 
   /**
-   * Deserialize the initial editor value.
+   * State: serialize the initial editor value.
    *
    * @type {Object}
    */
   state = {
-    value: Value.fromJSON(this.initialValue),
-    valueHtml: html.serialize(Value.fromJSON(this.initialValue))
-  };
-
-  /**
-   * Store a reference to the `editor`.
-   *
-   * @param {Editor} editor
-   */
-  ref = editor => {
-    this.editor = editor;
+    value: Value.fromJSON(this.initialModel),
+    plainText: Plain.serialize(Value.fromJSON(this.initialModel)),
+    valueHtml: html.serialize(Value.fromJSON(this.initialModel))
   };
 
   render() {
+    const textareaHeight = {
+      height: "5em"
+    };
     return (
       <div>
         <div className="resizable">
           <Toolbar>
-            {/*   renderMarkButton(type, icon) --> <Button> with <Icon>*/}
             {this.renderMarkButton("bold", "format_bold")}
             {this.renderMarkButton("italic", "format_italic")}
             {this.renderMarkButton("underlined", "format_underlined")}
@@ -165,27 +136,37 @@ class TextEditor extends React.Component {
           <Editor
             spellCheck
             autoFocus
-            placeholder="Enter some rich text..."
+            placeholder=""
+            style={textareaHeight}
             ref={this.ref}
             value={this.state.value}
             onChange={this.onChange}
             onKeyDown={this.onKeyDown}
             renderMark={this.renderMark}
-            renderNode={this.renderNode} /* eg return <li ..> for mark.type == "list-item" */
+            renderNode={this.renderNode}
           />
-          
         </div>
-        <div className="resizable grippie bbr-sm mr-0"></div>
+        <div className="resizable grippie bbr-sm mr-0" />
       </div>
     );
   }
 
-/*componentWillReceiveProps(props) {
-  const { parentProp } = this.props;
-  if (this.props.parentProp !== parentProp) {
-  console.log('------------this.props.parentProp:', this.props)
-  }
-}*/
+  /**
+   * On change, save the new `value`.
+   *
+   * @param {Editor} editor
+   */
+  onChange = ({ value }) => {
+    //if (value.document != this.state.value.document) {
+    var plainText = Plain.serialize(value);
+    // Show HTML of serialized Slate json
+    var valueHtml = html.serialize(this.state.value);
+    // Print Slate json or html string
+    //console.log('JSON.stringify(value.toJSON()): ',JSON.stringify(value.toJSON(), null, 4))
+    //console.log("valueHtml:", valueHtml);
+    // Set state
+    this.setState({ value, plainText, valueHtml });
+  };
 
   /**
    * On key down, if it is a formatting command toggle a mark.
@@ -283,8 +264,10 @@ class TextEditor extends React.Component {
       }
     }
     return (
-      //{active={isActive}}
-      <Button onMouseDown={event => this.onClickBlockBtn(event, type)}>
+      <Button
+        onMouseDown={event => this.onClickBlockBtn(event, type)}
+        active={isActive ? 1 : undefined}
+      >
         <Icon title={type}>{icon}</Icon>
       </Button>
     );

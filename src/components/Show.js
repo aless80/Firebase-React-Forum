@@ -106,7 +106,6 @@ class Show extends Component {
               {!isLoading && (
               <Comment
                 key="0"
-                comment2={this.state.post}
                 comment={{ ...this.state.post, ...{ id: 0 } }}
                 post_title={this.state.post.title}
               />)}

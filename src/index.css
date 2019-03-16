@@ -76,11 +76,6 @@ code {
     monospace;
 }
 
-/* eg Reply component */
-.form-control {
-  background: #f6f4d0;
-}
-
 /* Main component*/
 .alt1 {
   background: #e0edd3;
@@ -90,7 +85,6 @@ code {
 }
 .profile-pic {
   position: relative;
-  top: 13px;
   display: inline-block;
   background-repeat: no-repeat;
   width: 40px;
@@ -102,6 +96,7 @@ code {
   vertical-align: text-top;
   padding: 0.5rem;
 }
+
 
 /* Copied stuff I think
 .App {
@@ -253,12 +248,16 @@ div.thead {
   color: #848d95;
   vertical-align: bottom;
 }
+.comment-page .profile-pic {
+  top: 13px;
+  }
 
+  /*
 .inner {
   display: table-cell;
   text-align: right;
   bottom: 0;
-}
+}*/
 .relative {
   position: relative;
 }
@@ -290,7 +289,13 @@ div.thead {
   }
 }
 
+/* Create and Edit component */
+.form-control {
+  background: #f6f4d0;
+}
 
+
+/* TextEditor component */
 .richtext_icon {
   cursor: pointer;
   color: black;

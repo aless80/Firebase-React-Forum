@@ -6,7 +6,7 @@ class Edit extends Component {
   state = {
     key: "",
     title: "",
-    text: ""
+    plainText: ""
   };
 
   componentDidMount() {
@@ -20,7 +20,7 @@ class Edit extends Component {
         this.setState({
           key: doc.id,
           title: post.title,
-          text: post.text,
+          plainText: post.plainText,
           author: post.author,
           profilePicUrl: post.profilePicUrl,
           timestamp: post.timestamp
@@ -40,7 +40,7 @@ class Edit extends Component {
   onSubmit = e => {
     e.preventDefault();
 
-    const { title, text } = this.state;
+    const { title, plainText } = this.state;
 
     const updateRef = firebase
       .firestore()
@@ -49,13 +49,13 @@ class Edit extends Component {
     updateRef
       .update({
         title,
-        text
+        plainText
       })
       .then(docRef => {
         this.setState({
           key: "",
           title: "",
-          text: ""
+          plainText: ""
         });
         this.props.history.push("/show/" + this.props.match.params.id);
       })
@@ -91,7 +91,7 @@ class Edit extends Component {
                   placeholder="Text"
                   cols="80"
                   rows="4"
-                  value={this.state.text}
+                  value={this.state.plainText}
                 />
               </div>
               <div>
