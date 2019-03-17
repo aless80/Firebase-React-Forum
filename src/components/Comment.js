@@ -4,6 +4,7 @@ import {
   getDateTime,
   timeDifference
 } from "../Scripts/utilities";
+import { Link } from "react-router-dom";
 
 class Comment extends Component {
   profilePicStyle(url) {
@@ -108,16 +109,23 @@ class Comment extends Component {
                       }
                       id={"td_post_" + this.props.comment.id}
                     >
-                      <div id={"post_message_" + this.props.comment.id} dangerouslySetInnerHTML={{ __html: this.props.comment.richText }}>
-                      </div>
-
+                      <div
+                        id={"post_message_" + this.props.comment.id}
+                        dangerouslySetInnerHTML={{
+                          __html: this.props.comment.richText
+                        }}
+                      />
                       <div className="post-menu small text-muted bottom-right">
-                        <a
-                          href={"/posts/" + this.props.comment.id + "/edit"}
-                          className="suggest-edit-post"
+                        <Link
+                          to={
+                            "/edit/" +
+                            this.props.post_key +
+                            "/" +
+                            this.props.comment.id
+                          }
                         >
                           edit
-                        </a>
+                        </Link>
                         {/*<span>&nbsp;</span>
                           <a
                               href="#"

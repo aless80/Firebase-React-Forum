@@ -33,7 +33,7 @@ body {
 .table-posts td {
   border-top: 0;
 }
-tbody tr:hover {
+.table-posts tbody tr.alt1:hover, tr.alt2:hover {
   background-color: #f6f4d0;
 }
 
@@ -76,7 +76,7 @@ code {
     monospace;
 }
 
-/* Main component*/
+/* PostList component*/
 .alt1 {
   background: #e0edd3;
 }
@@ -136,11 +136,11 @@ code {
   background-image: linear-gradient(to bottom, #5a684b, #7d9169);
 }
 
-#account_circle {
+.navbar #account_circle {
   vertical-align: middle;
   margin: 2px;
 }
-#user-container {
+.navbar #user-container {
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -149,7 +149,7 @@ code {
   justify-content: flex-end;
   padding-right: 10px;
 }
-#user-container #user-pic {
+.navbar #user-container #user-pic {
   position: relative;
   display: inline-block;
   background-image: url("/images/profile_placeholder.png");
@@ -159,7 +159,7 @@ code {
   background-size: 40px;
   border-radius: 20px;
 }
-#user-container #user-name {
+.navbar #user-container #user-name {
   font-size: 16px;
   line-height: 1.5;
   padding-right: 10px;
@@ -167,7 +167,7 @@ code {
   color: #fff;
   font-family: inherit;
 }
-#user-container #sign-out {
+.navbar #user-container #sign-out {
   font-size: 16px;
   color: #fff;
   font-family: inherit;

@@ -11,7 +11,7 @@ const rules = [
     /* deserialize == convert DOM to Slate model*/
     deserialize(el, next) {
       const BLOCK_TAGS = {
-        blockquote: "quote",
+        blockquote: "blockquote",
         p: "paragraph",
         pre: "code",
         ul: "bulleted-list",
@@ -95,15 +95,7 @@ const rules = [
 // Create a new serializer instance with our 'rules'
 const html = new Html({ rules });
 
-
 class TextEditor extends React.Component {
-  /**
-   * Deserialize (convert HTML string to Slate object) initialModel prop from parent
-   *
-   * @type {Object}
-   */
-  initialModel = html.deserialize(this.props.initialRichText);
-  
   /**
    * Store a reference to the `editor`.
    *
@@ -114,15 +106,34 @@ class TextEditor extends React.Component {
   };
 
   /**
-   * State: serialize the initial editor value.
+   * Deserialize (convert HTML string to Slate object) initialModel prop from parent
    *
    * @type {Object}
    */
+  initialModel = html.deserialize(this.props.initialRichText);
+
+  /**
+   * State: serialize the initial editor value.
+   * @type {Object}
+   */
   state = {
-    value: Value.fromJSON(this.initialModel),
-    plainText: Plain.serialize(Value.fromJSON(this.initialModel)),
-    valueHtml: html.serialize(Value.fromJSON(this.initialModel))
+    value: Value.fromJSON(html.deserialize("")),
+    plainText: "",
+    valueHtml: ""
   };
+
+  /**
+   * Set state from props
+   * @param {*} nextProps
+   */
+  componentWillReceiveProps(nextProps) {
+    const value = Value.fromJSON(html.deserialize(nextProps.initialRichText));
+    this.setState({
+      value: value,
+      plainText: Plain.serialize(value),
+      valueHtml: nextProps.initialRichText
+    });
+  }
 
   render() {
     const textareaHeight = {

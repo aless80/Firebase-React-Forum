@@ -8,16 +8,14 @@ class Create extends Component {
     title: ""
   };
   fire_posts = firebase.firestore().collection("posts");
-  fire_comment_coll = firebase
-    .firestore()
-    .collection("comments")
-    //.doc(this.props.post_key);
+  fire_comments = firebase.firestore().collection("comments");
+  //.doc(this.props.post_key);
   refEditor = React.createRef();
-  initialRichText = "<p></p>" // this is rich text (I mean a string with HTML code)
+  initialRichText = "<p></p>"; // this is rich text (I mean a string with HTML code)
 
   // Change title
   onChangeTitle = e => {
-    const state = this.state;
+    const state = { ...this.state };
     state[e.target.name] = e.target.value;
     this.setState(state);
   };
@@ -36,17 +34,14 @@ class Create extends Component {
 
   onSubmit = e => {
     // Get the rich text (I mean a string with HTML code) from the reference to TextEditor
-    console.log('this.refEditor.current.state:', this.refEditor.current.state)
     var richText = this.refEditor.current.state.valueHtml;
     var plainText = this.refEditor.current.state.plainText;
     const { title } = this.state;
-    //this.setState({ ...this.state, richText: richText, plainText: plainText });
     // Send to Firebase
     e.preventDefault();
-    console.log('this.state:', this.state)
-    
     var author = this.getUserName();
     var profilePicUrl = this.getProfilePicUrl();
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     this.fire_posts
       .add({
         author: author,
@@ -55,53 +50,50 @@ class Create extends Component {
         title: title,
         plainText: plainText,
         richText: richText,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        last_edit: timestamp,
+        timestamp: timestamp
       })
       .then(docRef => {
-
-
-
-        var post_key = docRef.id
+        var post_key = docRef.id;
         var data = {
           author: author,
           profilePicUrl: this.getProfilePicUrl(),
           plainText: plainText,
           richText: richText,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          last_edit: timestamp,
+          timestamp: timestamp
         };
-        // Get document with all comments, push new comment, save document
-        var fire_comment = this.fire_comment_coll
-          .doc(post_key);
-        fire_comment.get()
-          .then(doc => {
-            console.log('fire_comment get doc:', doc)
-            var document = doc.data();
-            if (!document) document = {};
-
-            // Save post's rich text as comment number 1
-            document["1"] = data;
-            fire_comment.set(document)/*.then(doc => {
-              console.log('fire_comment set doc:', doc)
-            })*/
-            .catch(error => {
-              console.error("Error on setting document: ", error);
-            });
-    
-          })
-          .catch(error => {
-            console.error("Error on getting document: ", error);
-            return;
-        });
+        // Get document with all comments, push new comment
+        var fire_comment = this.fire_comments.doc(post_key);
+        this.addComment(fire_comment, 1, data);
         this.setState({
-          title: "",
+          title: ""
         });
-        // TODO
+        // Go back to root
         this.props.history.push("/");
       })
       .catch(error => {
-        console.error("Error adding document: ", error);
+        console.error("Error adding Post: ", error);
       });
   };
+
+  // Push a new comment to firebase
+  addComment(fire_comment_doc, id, data) {
+    fire_comment_doc
+      .get()
+      .then(doc => {
+        var document = doc.data();
+        if (!document) document = {};
+        document[id] = data;
+        fire_comment_doc.set(document).catch(error => {
+          console.error("Error on setting comment: ", error);
+        });
+      })
+      .catch(error => {
+        console.error("Error on getting comment: ", error);
+        return;
+      });
+  }
 
   render() {
     //const { title, plainText, richText } = this.state;
@@ -109,6 +101,7 @@ class Create extends Component {
     return (
       <div className="container">
         <div className="panel panel-default">
+          <br />
           <div className="panel-heading">
             <h3 className="panel-title">New Post</h3>
           </div>
@@ -126,7 +119,10 @@ class Create extends Component {
               </div>
               <div className="form-group">
                 <div className="border border-dark">
-                  <TextEditor ref={this.refEditor} initialRichText={this.initialRichText} />
+                  <TextEditor
+                    ref={this.refEditor}
+                    initialRichText={this.initialRichText}
+                  />
                 </div>
               </div>
               <div>

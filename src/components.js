@@ -1,19 +1,23 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-export const Button = "span";
-/*styled("span")`
+//export const Button = "span";
+export const Button = styled("span")`
   cursor: pointer;
   color: black;
-`;
-background-color: ${props =>
-    props.reversed
+  `
+  /*
+  background-color: ${props => {
+    console.log('props.reversed, .active:', props.reversed, props.active)
+    return props.reversed
       ? props.active
         ? "white"
         : "#aaa"
       : props.active
       ? "black"
-      : "rgba(50, 50, 50, 0.25)"};
+      : "rgba(50, 50, 50, 0.25)";
+  }};
+`;
 */
 
 export const Icon = styled(({ className, ...rest }) => {

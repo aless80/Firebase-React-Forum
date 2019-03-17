@@ -1,15 +1,20 @@
 import React, { Component } from "react";
-import { BrowserRouter, Route, Redirect } from "react-router-dom";
-import Main from "./components/Main";
+import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
+import PostList from "./components/PostList";
 import Login from "./components/Login";
 import Edit from "./components/Edit";
 import Create from "./components/Create";
-import Show from "./components/Show";
+import Post from "./components/Post";
 import Navbar from "./components/Navbar";
 import firebase from "./Firebase";
 
 // Secure routes
-function AuthenticatedRoute({ component: Component, authenticated, redirect="/login", ...rest }) {
+function AuthenticatedRoute({
+  component: Component,
+  authenticated,
+  redirect = "/login",
+  ...rest
+}) {
   return (
     <Route
       {...rest}
@@ -37,9 +42,9 @@ export default class App extends Component {
   initFirebaseAuth() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        console.log('User is logged in')
+        console.log("User is logged in");
       } else {
-        console.log('User is logged out')
+        console.log("User is logged out");
       }
       this.setUser(user);
     });
@@ -55,25 +60,40 @@ export default class App extends Component {
         <div>
           <Navbar setuserCallback={this.setUser} />
           <main className="mdl-layout__content mdl-color--grey-100">
-            <Route exact path="/" component={Main} />
-            <AuthenticatedRoute exact path="/login" authenticated={this.state.user == null} redirect="/" component={Login} />
-            <AuthenticatedRoute
+            <Switch>
+              <Route exact path="/" component={PostList} />
+              <AuthenticatedRoute
+                exact
+                path="/login"
+                authenticated={this.state.user == null}
+                redirect="/"
+                component={Login}
+              />
+              <AuthenticatedRoute
+                exact
+                path="/create"
+                authenticated={this.state.user != null}
+                component={Create}
+              />
+              <Route
+                exact
+                path="/post/:id"
+                render={props => <Post {...props} />}
+              />
+              <Route
               exact
-              path="/edit/:id"
-              authenticated={this.state.user != null}
-              component={Edit}
-            />
-            <AuthenticatedRoute
-              exact
-              path="/create"
-              authenticated={this.state.user != null}
-              component={Create}
-            />
-            <Route
-              exact
-              path="/show/:id"
-              render={props => <Show {...props} />}
-            />
+              path="/edit/:postkey/:commentid"
+              render={props => <Edit {...props} />}
+              />
+
+              <AuthenticatedRoute
+                exact
+                path="/edit2/:postkey/:commentid"
+                authenticated={this.state.user != null} 
+                component={Edit}
+              />
+              <Route exact path="*" render={() => <h1>Page not found</h1>} />
+            </Switch>
           </main>
         </div>
       </BrowserRouter>

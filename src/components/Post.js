@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Reply from "./Reply";
 import Comment from "./Comment";
 
-class Show extends Component {
+class Post extends Component {
   state = {
     post: {},
     post_key: "",
@@ -32,7 +32,6 @@ class Show extends Component {
         console.log("No such document!");
       }
     });
-
     this.fire_post.get().then(doc => {
       if (doc.exists) {
         // Set the state
@@ -46,6 +45,20 @@ class Show extends Component {
       }
     });
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('componentDidUpdate')
+    if (this.props !== prevProps) {
+      console.log('prevProps:', prevProps)
+      console.log('this.props:', this.props)
+    }
+    if (this.state.post.last_edit !== prevState.last_edit) {
+      console.log('prevState:', prevState)
+      console.log('this.state:', this.state)
+      //this.setState()
+    }
+  }
+
   /*
   delete(id) {
     firebase
@@ -78,7 +91,7 @@ class Show extends Component {
   }
 
   toggleShowComment() {
-    const state = this.state;
+    const state = { ...this.state };
     state["showComment"] = !state["showComment"];
     this.setState(state);
   }
@@ -100,20 +113,13 @@ class Show extends Component {
               <br />
             </div>
             <div className="panel-body">
-              {isLoading && (
-                <div className="spinner" /> // render null when app is not ready
-              )}
-              {!isLoading && (
-              <Comment
-                key="0"
-                comment={{ ...this.state.post, ...{ id: 0 } }}
-                post_title={this.state.post.title}
-              />)}
+              {isLoading && <div className="spinner" />}
               {this.comment_array.map(comment => (
                 <Comment
                   key={comment.id}
                   comment={comment}
                   post_title={this.state.post.title}
+                  post_key={this.state.post_key}
                 />
               ))}
               <div>
@@ -144,4 +150,4 @@ class Show extends Component {
   }
 }
 
-export default Show;
+export default Post;

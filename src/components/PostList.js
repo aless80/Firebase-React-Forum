@@ -10,7 +10,7 @@ import {
 
 export const TRUNCATION_LIMIT = 290;
 
-class Main extends Component {
+class PostList extends Component {
   fire_posts = firebase
     .firestore()
     .collection("posts")
@@ -62,23 +62,20 @@ class Main extends Component {
     return { backgroundImage: `url(${url})` };
   }
 
-  // TODO: with one single post the picture goes out of table
-  // TODO: bad css when "No posts": hover changes color and green border on bottom
   render() {
     const { isLoading } = this.state;
     return (
       <div className="container">
         <div className="panel panel-default">
+          <br />
           <div className="panel-heading">
             <h3 className="panel-title">Posts</h3>
           </div>
+          <br />
           <div className="panel-body">
-          {isLoading && (
-                <div className="spinner" /> // render null when app is not ready
-              )}
-              {!isLoading && (
-            <div className="table-posts">
-              
+            {isLoading && <div className="spinner" />}
+            {!isLoading && (
+              <div className="table-posts">
                 <table className="table mb-0">
                   <thead>
                     <tr>
@@ -91,7 +88,7 @@ class Main extends Component {
                   </thead>
                   <tbody>
                     {this.state.posts.length === 0 && (
-                      <tr>
+                      <tr className="border-bottom-0">
                         <td>No posts</td>
                       </tr>
                     )}
@@ -105,7 +102,7 @@ class Main extends Component {
                           />
                           <td>
                             <Link
-                              to={`/show/${post.key}`}
+                              to={`/post/${post.key}`}
                               className="post-title"
                             >
                               {post.title}
@@ -122,8 +119,8 @@ class Main extends Component {
                       ))}
                   </tbody>
                 </table>
-              
-            </div>)}
+              </div>
+            )}
             <div>
               <br />
               {/*<button
@@ -145,4 +142,4 @@ class Main extends Component {
   }
 }
 
-export default Main;
+export default PostList;

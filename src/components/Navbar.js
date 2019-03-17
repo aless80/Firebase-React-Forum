@@ -46,7 +46,7 @@ export default class Navbar extends Component {
     return (
       <div>
         <Navbarstrap color="navbar navbar-dark" expand="md">
-          <NavbarBrand href="/">Board Game Nerd</NavbarBrand>
+          <NavbarBrand href="/">Firebase React Forum</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>

@@ -4,8 +4,7 @@ import TextEditor from "./TextEditor";
 
 class Reply extends Component {
   state = {
-    comment_key: "",
-    //post_key: ""
+    comment_key: ""
   };
   fire_post = firebase
     .firestore()
@@ -38,11 +37,13 @@ class Reply extends Component {
     e.preventDefault();
     const { comment_key } = this.state;
     var richText = this.refEditor.current.state.valueHtml;
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     var data = {
       author: this.getUserName(),
       profilePicUrl: this.getProfilePicUrl(),
       richText: richText,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      last_edit: timestamp,
+      timestamp: timestamp
     };
 
     //not working on fire_comment
@@ -100,7 +101,7 @@ class Reply extends Component {
   };
 
   /*onChange = e => {
-    const state = this.state;
+    const state = {...this.state};
     state[e.target.name] = e.target.value;
     this.setState(state);
   };*/
