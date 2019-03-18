@@ -1,38 +1,41 @@
 import React from "react";
-import styled from "@emotion/styled";
-import styled2 from 'styled-components'
+import styled, { css } from "styled-components";
 
-//export const Button = "span";
-export const Button = styled2.span`
+export const EditorContainer = styled.div`
+  background-color: #f6f4d0;
+  padding: 0;
+`;
+
+export const TextArea = styled.div`
+  resize: vertical;
+  overflow: auto;
+`;
+
+export const Button = styled.span`
   cursor: pointer;
   color: black;
-  `
-  /*
-  background-color: ${props => {
-    console.log('props.reversed, .active:', props.reversed, props.active)
-    return props.reversed
-      ? props.active
-        ? "white"
-        : "#aaa"
-      : props.active
-      ? "black"
-      : "rgba(50, 50, 50, 0.25)";
-  }};
+  cursor: pointer;
+  color: black;
+  ${props =>
+    !props.isActive &&
+    css`
+      padding: 1px;
+      border: 1px transparent rgba(255, 255, 255, 0.5);
+    `};
+  ${props =>
+    props.isActive &&
+    css`
+      padding: 0px;
+      border: 1px dotted rgb(122, 121, 121);
+      box-shadow: -1px 1px #ccc, -2px 2px #ccc, -3px 3px #ccc, -4px 4px #ccc;
+    `};
 `;
-*/
-/*
-export const Icon2 = styled(({ className, ...rest }) => {
-  return <span className={`material-icons ${className}`} {...rest} />;
-})`
-  font-size: 18px;
-  vertical-align: text-bottom;
-`;*/
+
 export const Icon = ({ className, ...rest }) => (
   <span className={`material-icons ${className}`} {...rest} />
 );
 
-
-export const Menu = styled2.div`
+export const Menu = styled.div`
   & > * {
     display: inline-block;
   }
@@ -41,10 +44,17 @@ export const Menu = styled2.div`
   }
 `;
 
-export const Toolbar = styled2(Menu)`
+export const Toolbar = styled(Menu)`
   position: relative;
   padding: 1px 18px 17px;
-  /*margin: 0 -20px;*/
   border-bottom: 2px solid #eee;
   margin-bottom: 20px;
+`;
+
+export const StyledBlockquote = styled(Menu)`
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 40px;
+  margin-right: 40px;
 `;

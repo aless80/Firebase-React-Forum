@@ -24,7 +24,6 @@ class PostList extends Component {
   onCollectionUpdate = querySnapshot => {
     const posts = [];
     querySnapshot.forEach(doc => {
-      const { title, plainText, comments, author, profilePicUrl, timestamp } = doc.data();
       posts.push({...doc.data(), key: doc.id})
     });
     this.setState({

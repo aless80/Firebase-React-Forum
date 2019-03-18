@@ -297,29 +297,15 @@ div.thead {
 
 
 /* TextEditor component */
-.richtext_icon {
-  padding: 1px;
-  border: 1px transparent rgba(255,255,255,.5);
-  cursor: pointer;
-  color: black;
-}
-.raisedbox { 
-  padding: 0px;
-  border: 1px solid rgb(122, 121, 121);
-  box-shadow:  -1px 1px #ccc,
-       -2px 2px #ccc,
-       -3px 3px #ccc,
-       -4px 4px #ccc;
-}
-.activea {
-  background-color: rgba(50, 50, 50, 0.25);
+.textEditor blockquote { 
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 40px;
+  margin-right: 40px;
 }
 
-.resizable{
-  resize: vertical;
-  overflow: auto;
-  background-color: #f6f4d0;
-}/*
+/*
 .grippie {
   background-position: calc(50% + 34px) -364px;
   border: 1px solid #d6d9dc;

@@ -2,9 +2,11 @@ import { Editor } from "slate-react";
 import { Value } from "slate";
 import React from "react";
 import { isKeyHotkey } from "is-hotkey";
-import { Button, Icon, Toolbar } from "../components";
+import { TextArea, EditorContainer, Button, Icon, Toolbar } from "../components";
 import Plain from "slate-plain-serializer";
 import Html from "slate-html-serializer";
+//
+//https://github.com/wesharehoodies/slate-react-rich-text-editor/tree/part-1
 
 const rules = [
   {
@@ -14,11 +16,11 @@ const rules = [
         blockquote: "blockquote",
         p: "paragraph",
         pre: "code",
-        ul: "bulleted-list",
         h1: "heading-one",
         h2: "heading-two",
-        li: "list-item",
-        ol: "numbered-list"
+        ol: "numbered-list",
+        ul: "bulleted-list",
+        li: "list-item"
       };
       const type = BLOCK_TAGS[el.tagName.toLowerCase()];
       //console.log('deserialize type:', type)
@@ -44,11 +46,19 @@ const rules = [
             );
           case "paragraph":
             return <p className={obj.data.get("className")}>{children}</p>;
-          case "block-quote":
+          case "blockquote":
             return <blockquote>{children}</blockquote>;
+          case "heading-one":
+            return <h1>{children}</h1>;
+          case "heading-two":
+            return <h2>{children}</h2>;
+          case "numbered-list":
+            return <ol>{children}</ol>;
+          case "bulleted-list":
+            return <ul>{children}</ul>;
+          case "list-item":
+            return <li>{children}</li>;
           default:
-            //TODO: code icon should toggle. maybe all block icons
-            //TODO: heading-one fails
             console.error(
               "serialize block on default case. obj.type=",
               obj.type
@@ -63,7 +73,7 @@ const rules = [
       const MARK_TAGS = {
         em: "italic",
         strong: "bold",
-        u: "underlined"
+        u: "underlined",
       };
       const type = MARK_TAGS[el.tagName.toLowerCase()];
       if (type) {
@@ -139,11 +149,11 @@ class TextEditor extends React.Component {
 
   render() {
     const textareaHeight = {
-      height: "5em"
+      height: "8em"
     };
     return (
-      <div>
-        <div className="resizable">
+      <div className="textEditor">
+        <EditorContainer>
           <Toolbar>
             {this.renderMarkButton("bold", "format_bold")}
             {this.renderMarkButton("italic", "format_italic")}
@@ -151,23 +161,25 @@ class TextEditor extends React.Component {
             {this.renderBlockButton("code", "code")}
             {this.renderBlockButton("heading-one", "looks_one")}
             {this.renderBlockButton("heading-two", "looks_two")}
-            {this.renderBlockButton("block-quote", "format_quote")}
+            {this.renderBlockButton("blockquote", "format_quote")}
             {this.renderBlockButton("numbered-list", "format_list_numbered")}
             {this.renderBlockButton("bulleted-list", "format_list_bulleted")}
           </Toolbar>
-          <Editor
-            spellCheck
-            autoFocus
-            placeholder=""
-            style={textareaHeight}
-            ref={this.ref}
-            value={this.state.value}
-            onChange={this.onChange}
-            onKeyDown={this.onKeyDown}
-            renderMark={this.renderMark}
-            renderNode={this.renderNode}
-          />
-        </div>
+          <TextArea>
+            <Editor
+              spellCheck
+              autoFocus
+              placeholder=""
+              style={textareaHeight}
+              ref={this.ref}
+              value={this.state.value}
+              onChange={this.onChange}
+              onKeyDown={this.onKeyDown}
+              renderMark={this.renderMark}
+              renderNode={this.renderBlock}
+            />
+          </TextArea>
+        </EditorContainer>
         <div className="resizable grippie bbr-sm mr-0" />
       </div>
     );
@@ -202,15 +214,12 @@ class TextEditor extends React.Component {
     const isBoldHotkey = isKeyHotkey("mod+b");
     const isItalicHotkey = isKeyHotkey("mod+i");
     const isUnderlinedHotkey = isKeyHotkey("mod+u");
-    const isCodeHotkey = isKeyHotkey("mod+`");
     if (isBoldHotkey(event)) {
       mark = "bold";
     } else if (isItalicHotkey(event)) {
       mark = "italic";
     } else if (isUnderlinedHotkey(event)) {
       mark = "underlined";
-    } else if (isCodeHotkey(event)) {
-      mark = "code";
     } else {
       return next();
     }
@@ -244,23 +253,23 @@ class TextEditor extends React.Component {
    * @param {Object} props
    * @return {Element}
    */
-  renderNode = (props, editor, next) => {
+  renderBlock = (props, editor, next) => {
     const { attributes, children, node } = props;
     switch (node.type) {
       case "code":
         return <code {...attributes}>{children}</code>;
-      case "block-quote":
+      case "blockquote":
         return <blockquote {...attributes}>{children}</blockquote>;
-      case "bulleted-list":
-        return <ul {...attributes}>{children}</ul>;
       case "heading-one":
         return <h1 {...attributes}>{children}</h1>;
       case "heading-two":
         return <h2 {...attributes}>{children}</h2>;
-      case "list-item":
-        return <li {...attributes}>{children}</li>;
       case "numbered-list":
         return <ol {...attributes}>{children}</ol>;
+      case "bulleted-list":
+        return <ul {...attributes}>{children}</ul>;
+      case "list-item":
+        return <li {...attributes}>{children}</li>;
       default:
         return next();
     }
@@ -279,7 +288,6 @@ class TextEditor extends React.Component {
       const {
         value: { document, blocks }
       } = this.state;
-
       if (blocks.size > 0) {
         const parent = document.getParent(blocks.first().key);
         isActive = this.hasBlock("list-item") && parent && parent.type === type;
@@ -287,6 +295,7 @@ class TextEditor extends React.Component {
     }
     return (
       <Button
+        isActive={isActive}
         onMouseDown={event => this.onClickBlockBtn(event, type)}
         active={isActive ? 1 : undefined}
       >
@@ -306,9 +315,7 @@ class TextEditor extends React.Component {
     const isActive = this.hasMark(type);
     return (
       <Button
-        className={
-          isActive ? "richtext_icon raisedbox active" : "richtext_icon"
-        }
+        isActive={isActive}
         onMouseDown={event => this.onClickMarkBtn(event, type)}
       >
         <Icon title={type}>{icon}</Icon>

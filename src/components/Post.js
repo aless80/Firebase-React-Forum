@@ -46,6 +46,7 @@ class Post extends Component {
     });
   }
 
+  /*
   componentDidUpdate(prevProps, prevState) {
     console.log('componentDidUpdate')
     if (this.props !== prevProps) {
@@ -57,7 +58,7 @@ class Post extends Component {
       console.log('this.state:', this.state)
       //this.setState()
     }
-  }
+  }*/
 
   /*
   delete(id) {

@@ -69,9 +69,11 @@ export default class App extends Component {
                 redirect="/"
                 component={Login}
               />
+              {/* FIXME: NB duplicate route. Normal Routes are handy for debugging*/}
+              <Route exact path="/create" component={Create} />
               <AuthenticatedRoute
                 exact
-                path="/create"
+                path="/create2"
                 authenticated={this.state.user != null}
                 component={Create}
               />
@@ -80,16 +82,16 @@ export default class App extends Component {
                 path="/post/:id"
                 render={props => <Post {...props} />}
               />
+              {/* FIXME: NB duplicate route. Normal Routes are handy for debugging*/}
               <Route
-              exact
-              path="/edit/:postkey/:commentid"
-              render={props => <Edit {...props} />}
+                exact
+                path="/edit/:postkey/:commentid"
+                render={props => <Edit {...props} />}
               />
-
               <AuthenticatedRoute
                 exact
                 path="/edit2/:postkey/:commentid"
-                authenticated={this.state.user != null} 
+                authenticated={this.state.user != null}
                 component={Edit}
               />
               <Route exact path="*" render={() => <h1>Page not found</h1>} />
