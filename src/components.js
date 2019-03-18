@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "@emotion/styled";
+import styled2 from 'styled-components'
 
 //export const Button = "span";
-export const Button = styled("span")`
+export const Button = styled2.span`
   cursor: pointer;
   color: black;
   `
@@ -19,15 +20,19 @@ export const Button = styled("span")`
   }};
 `;
 */
-
-export const Icon = styled(({ className, ...rest }) => {
+/*
+export const Icon2 = styled(({ className, ...rest }) => {
   return <span className={`material-icons ${className}`} {...rest} />;
 })`
   font-size: 18px;
   vertical-align: text-bottom;
-`;
+`;*/
+export const Icon = ({ className, ...rest }) => (
+  <span className={`material-icons ${className}`} {...rest} />
+);
 
-export const Menu = styled("div")`
+
+export const Menu = styled2.div`
   & > * {
     display: inline-block;
   }
@@ -36,7 +41,7 @@ export const Menu = styled("div")`
   }
 `;
 
-export const Toolbar = styled(Menu)`
+export const Toolbar = styled2(Menu)`
   position: relative;
   padding: 1px 18px 17px;
   /*margin: 0 -20px;*/

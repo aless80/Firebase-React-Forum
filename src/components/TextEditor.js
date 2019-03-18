@@ -47,6 +47,8 @@ const rules = [
           case "block-quote":
             return <blockquote>{children}</blockquote>;
           default:
+            //TODO: code icon should toggle. maybe all block icons
+            //TODO: heading-one fails
             console.error(
               "serialize block on default case. obj.type=",
               obj.type
@@ -61,7 +63,7 @@ const rules = [
       const MARK_TAGS = {
         em: "italic",
         strong: "bold",
-        u: "underline"
+        u: "underlined"
       };
       const type = MARK_TAGS[el.tagName.toLowerCase()];
       if (type) {
@@ -79,7 +81,7 @@ const rules = [
             return <strong>{children}</strong>;
           case "italic":
             return <em>{children}</em>;
-          case "underline":
+          case "underlined":
             return <u>{children}</u>;
           default:
             console.error(

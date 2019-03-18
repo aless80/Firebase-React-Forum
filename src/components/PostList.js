@@ -24,15 +24,8 @@ class PostList extends Component {
   onCollectionUpdate = querySnapshot => {
     const posts = [];
     querySnapshot.forEach(doc => {
-      const { title, plainText, author, profilePicUrl, timestamp } = doc.data();
-      posts.push({
-        key: doc.id,
-        title,
-        plainText,
-        author,
-        profilePicUrl,
-        timestamp
-      });
+      const { title, plainText, comments, author, profilePicUrl, timestamp } = doc.data();
+      posts.push({...doc.data(), key: doc.id})
     });
     this.setState({
       posts,
@@ -50,7 +43,6 @@ class PostList extends Component {
 
   profilePicStyle(url) {
     if (!url) {
-      //console.error("Could not find picture url for post");
       return undefined;
     }
     if (
@@ -82,8 +74,9 @@ class PostList extends Component {
                       <th>Picture</th>
                       <th>Title</th>
                       <th>Text</th>
+                      <th>Comments</th>
                       <th>Author</th>
-                      <th>Date</th>
+                      <th>Created</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -93,7 +86,8 @@ class PostList extends Component {
                       </tr>
                     )}
                     {this.state.posts.length > 0 &&
-                      this.state.posts.map((post, i) => (
+                      this.state.posts.map((post, i) => 
+                      (
                         <tr key={post.key} className={"alt" + ((i % 2) + 1)}>
                           <td
                             className="profile-pic"
@@ -109,6 +103,7 @@ class PostList extends Component {
                             </Link>
                           </td>
                           <td>{truncate(post.plainText, TRUNCATION_LIMIT)}</td>
+                          <td>{post.comments-1}</td>
                           <td>{post.author}</td>
                           <td
                             title={getDateTime(getDateObject(post.timestamp))}

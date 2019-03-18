@@ -32,6 +32,7 @@ body {
 }
 .table-posts td {
   border-top: 0;
+  padding: 0.5rem;
 }
 .table-posts tbody tr.alt1:hover, tr.alt2:hover {
   background-color: #f6f4d0;
