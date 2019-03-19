@@ -5,40 +5,29 @@ import {
   timeDifference
 } from "../Scripts/utilities";
 import { Link } from "react-router-dom";
+import { getUserName, profilePicStyle } from "../Scripts/firebaseCRUD";
 
 class Comment extends Component {
-  profilePicStyle(url) {
-    if (!url) {
-      //console.error("Could not find picture url for post");
-      return undefined;
-    }
-    if (
-      url.indexOf("googleusercontent.com") !== -1 &&
-      url.indexOf("?") === -1
-    ) {
-      url = url + "?sz=150";
-    }
-    return {
-      backgroundImage: `url(${url})`,
-      /* Override size */
-      top: "0px",
-      width: "30px",
-      height: "30px",
-      backgroundSize: "30px",
-      borderRadius: "15px",
-      marginLeft: "0px",
-      padding: "0.0rem"
-    };
-  }
   delete() {
     const res = window.confirm("Do you really want to remove this comment?");
     if (!res) {
       return;
     }
     this.props.deleteCallback(this.props.post_key, this.props.comment.id);
-
   }
+
   render() {
+    const imageStyle = {
+      /* Override layout of user picture */
+      top: "0px",
+      width: "30px",
+      height: "30px",
+      backgroundSize: "30px",
+      borderRadius: "15px",
+      marginLeft: "0px",
+      padding: "0.0rem",
+      fontSize: "32px"
+    };
     return (
       <div align="center">
         <div className="comment-page text-left w-100">
@@ -87,16 +76,30 @@ class Comment extends Component {
                     >
                       <div id={"postmenu_" + this.props.comment.id}>
                         <div className="font-weight-strong">
-                          <strong>{this.props.comment.author}</strong>
+                          {this.props.comment.author ? (<strong>{this.props.comment.author}</strong>) : 
+                          (<strong>&nbsp;</strong>)}
                         </div>
                       </div>
-                      <div
-                        className="profile-pic"
-                        style={this.profilePicStyle(
-                          this.props.comment.profilePicUrl
-                        )}
-                        title={this.props.comment.author}
-                      />
+
+                      {this.props.comment.profilePicUrl ? (
+                        <div
+                          className="profile-pic"
+                          style={profilePicStyle(
+                            this.props.comment.profilePicUrl,
+                            imageStyle
+                          )}
+                          title={this.props.comment.author}
+                        />
+                      ) : (
+                        <div
+                          className="material-icons md-42 profile-pic"
+                          style={imageStyle}
+                          title="The author deleted this comment"
+                        >
+                          account_circle
+                        </div>
+                      )}
+
                       <div className="small text-muted">
                         <br />
                         <div
@@ -138,32 +141,28 @@ class Comment extends Component {
                           __html: this.props.comment.richText
                         }}
                       />
-                      <div className="post-menu small text-muted bottom-right">
-                        <Link
-                          to={
-                            "/edit/" +
-                            this.props.post_key +
-                            "/" +
-                            this.props.comment.id
-                          }
-                        >
-                          edit
-                        </Link>
-                        <span>&nbsp;</span>
-                        <a type="submit" onClick={() => this.delete()}>
-                          delete
-                        </a>
-                        {/*<Link
-                          to={
-                            "/delete/" +
-                            this.props.post_key +
-                            "/" +
-                            this.props.comment.id
-                          }
-                        >
-                          delete
-                        </Link>*/}
-                      </div>
+                      {this.props.comment.author === getUserName() && (
+                        <div className="post-menu small text-muted bottom-right">
+                          <Link
+                            to={
+                              "/edit/" +
+                              this.props.post_key +
+                              "/" +
+                              this.props.comment.id
+                            }
+                          >
+                            edit
+                          </Link>
+                          <span>&nbsp;</span>
+                          <button
+                            type="button"
+                            className="link-button"
+                            onClick={() => this.delete()}
+                          >
+                            delete
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 </tbody>

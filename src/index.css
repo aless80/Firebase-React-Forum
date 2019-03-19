@@ -32,11 +32,18 @@ body {
 }
 .table-posts td {
   border-top: 0;
-  padding: 0.5rem;
+  /*padding: 0.5rem;*/
+  padding: 0.75rem;
+  vertical-align: middle;
 }
 .table-posts tbody tr.alt1:hover,
 tr.alt2:hover {
   background-color: #f6f4d0;
+}
+
+.table-posts td .material-icons {
+  /* I hope this holds. Te account_circle icon is not centered? */
+  margin-left: 4px;
 }
 
 .table a {
@@ -249,6 +256,23 @@ div.thead {
   color: #848d95;
   vertical-align: bottom;
 }
+
+.comment-page .link-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  line-height: inherit;
+  color: rgb(132, 141, 149);
+}
+
+.comment-page .link-button:hover {
+  text-decoration: underline;
+}
+
 .comment-page .profile-pic {
   top: 13px;
 }

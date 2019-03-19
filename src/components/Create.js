@@ -1,7 +1,9 @@
 import React, { Component } from "react";
+import PropTypes from 'prop-types';
 import firebase from "../Firebase";
 import { Link } from "react-router-dom";
 import TextEditor from "./TextEditor";
+import { getUserName, getProfilePicUrl } from "../Scripts/firebaseCRUD"
 
 class Create extends Component {
   state = {
@@ -20,18 +22,6 @@ class Create extends Component {
     this.setState(state);
   };
 
-  // Returns the signed-in user's display name.
-  getUserName() {
-    return firebase.auth().currentUser.displayName;
-  }
-
-  // Returns the signed-in user's profile Pic URL.
-  getProfilePicUrl() {
-    return (
-      firebase.auth().currentUser.photoURL || "/images/profile_placeholder.png"
-    );
-  }
-
   onSubmit = e => {
     // Get the rich text (I mean a string with HTML code) from the reference to TextEditor
     var richText = this.refEditor.current.state.valueHtml;
@@ -39,8 +29,8 @@ class Create extends Component {
     const { title } = this.state;
     // Send to Firebase
     e.preventDefault();
-    var author = this.getUserName();
-    var profilePicUrl = this.getProfilePicUrl();
+    var author = getUserName();
+    var profilePicUrl = getProfilePicUrl();
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     this.fire_posts
       .add({
@@ -57,7 +47,7 @@ class Create extends Component {
         var post_key = docRef.id;
         var data = {
           author: author,
-          profilePicUrl: this.getProfilePicUrl(),
+          profilePicUrl: getProfilePicUrl(),
           plainText: plainText,
           richText: richText,
           lastEdit: timestamp,
@@ -141,4 +131,8 @@ class Create extends Component {
   }
 }
 
+Create.propTypes = {
+  ref: PropTypes.array.isRequired,
+  initialRichText: PropTypes.string.isRequired,
+}
 export default Create;

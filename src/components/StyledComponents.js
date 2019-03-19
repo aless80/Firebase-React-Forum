@@ -31,8 +31,8 @@ export const Button = styled.span`
     `};
 `;
 
-export const Icon = ({ className, ...rest }) => (
-  <span className={`material-icons ${className}`} {...rest} />
+export const Icon = ({ ...rest }) => (
+  <span className='material-icons' {...rest} />
 );
 
 export const Menu = styled.div`

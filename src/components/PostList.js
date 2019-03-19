@@ -7,6 +7,7 @@ import {
   getDateTime,
   timeDifference
 } from "../Scripts/utilities";
+import { profilePicStyle } from "../Scripts/firebaseCRUD";
 
 export const TRUNCATION_LIMIT = 290;
 
@@ -24,7 +25,7 @@ class PostList extends Component {
   onCollectionUpdate = querySnapshot => {
     const posts = [];
     querySnapshot.forEach(doc => {
-      posts.push({...doc.data(), key: doc.id})
+      posts.push({ ...doc.data(), key: doc.id });
     });
     this.setState({
       posts,
@@ -38,19 +39,6 @@ class PostList extends Component {
   }
   componentWillUnmount() {
     this.unsubscribe();
-  }
-
-  profilePicStyle(url) {
-    if (!url) {
-      return undefined;
-    }
-    if (
-      url.indexOf("googleusercontent.com") !== -1 &&
-      url.indexOf("?") === -1
-    ) {
-      url = url + "?sz=150";
-    }
-    return { backgroundImage: `url(${url})` };
   }
 
   render() {
@@ -85,14 +73,26 @@ class PostList extends Component {
                       </tr>
                     )}
                     {this.state.posts.length > 0 &&
-                      this.state.posts.map((post, i) => 
-                      (
+                      this.state.posts.map((post, i) => (
                         <tr key={post.key} className={"alt" + ((i % 2) + 1)}>
-                          <td
-                            className="profile-pic"
-                            style={this.profilePicStyle(post.profilePicUrl)}
-                            title={post.author}
-                          />
+                          {post.profilePicUrl ? (
+                            <td>
+                              <div
+                                className="profile-pic"
+                                style={profilePicStyle(post.profilePicUrl)}
+                                title={post.author}
+                              />
+                            </td>
+                          ) : (
+                            <td>
+                              <div
+                                className="material-icons md-36 profile-pic"
+                                title="The author deleted this post"
+                              >
+                                account_circle
+                              </div>
+                            </td>
+                          )}
                           <td>
                             <Link
                               to={`/post/${post.key}`}
@@ -102,7 +102,7 @@ class PostList extends Component {
                             </Link>
                           </td>
                           <td>{truncate(post.plainText, TRUNCATION_LIMIT)}</td>
-                          <td>{post.comments-1}</td>
+                          <td>{post.comments - 1}</td>
                           <td>{post.author}</td>
                           <td
                             title={getDateTime(getDateObject(post.timestamp))}

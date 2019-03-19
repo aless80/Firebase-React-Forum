@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import firebase from "../Firebase";
 import TextEditor from "./TextEditor";
+import { getUserName, getProfilePicUrl } from "../Scripts/firebaseCRUD"
 
 class Reply extends Component {
   state = {
@@ -39,8 +40,8 @@ class Reply extends Component {
     var richText = this.refEditor.current.state.valueHtml;
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     var data = {
-      author: this.getUserName(),
-      profilePicUrl: this.getProfilePicUrl(),
+      author: getUserName(),
+      profilePicUrl: getProfilePicUrl(),
       richText: richText,
       lastEdit: timestamp,
       timestamp: timestamp
@@ -105,18 +106,6 @@ class Reply extends Component {
     state[e.target.name] = e.target.value;
     this.setState(state);
   };*/
-
-  // Returns the signed-in user's display name.
-  getUserName() {
-    return firebase.auth().currentUser.displayName;
-  }
-
-  // Returns the signed-in user's profile Pic URL.
-  getProfilePicUrl() {
-    return (
-      firebase.auth().currentUser.photoURL || "/images/profile_placeholder.png"
-    );
-  }
 
   render() {
     //const { richText } = this.state;

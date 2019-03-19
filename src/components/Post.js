@@ -3,7 +3,7 @@ import firebase from "../Firebase";
 import { Link } from "react-router-dom";
 import Reply from "./Reply";
 import Comment from "./Comment";
-import {deleteComment} from "../Scripts/firebaseCRUD";
+import { invalidateComment, invalidatePost } from "../Scripts/firebaseCRUD";
 
 class Post extends Component {
   state = {
@@ -62,10 +62,11 @@ class Post extends Component {
   }*/
 
   deleteCallback = (post_key, commentid) => {
-    console.log("deleteCallback(post_key, commentid):", post_key, commentid);
-    deleteComment(post_key, commentid);
+    invalidateComment(post_key, commentid);
+    if (commentid === '1') {      
+      invalidatePost(post_key);
+    }
     this.props.history.push(`/`);
-    //, window.location.reload()
   };
 
   doc2array(comment_array) {
