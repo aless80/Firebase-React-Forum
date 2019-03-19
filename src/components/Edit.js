@@ -66,7 +66,7 @@ class Edit extends Component {
     // Get document with all comments, push new comment
     const data_comment = {
       richText: richText,
-      last_edit: firebase.firestore.FieldValue.serverTimestamp()
+      lastEdit: firebase.firestore.FieldValue.serverTimestamp()
     };
     this.updateComment(
       this.fire_comment,
@@ -80,7 +80,7 @@ class Edit extends Component {
       const data_post = {
         title: title,
         plainText: plainText,
-        last_edit: firebase.firestore.FieldValue.serverTimestamp()
+        lastEdit: firebase.firestore.FieldValue.serverTimestamp()
       };
       this.updatePost(this.fire_post, data_post);
     }

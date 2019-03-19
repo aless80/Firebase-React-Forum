@@ -42,7 +42,7 @@ class Reply extends Component {
       author: this.getUserName(),
       profilePicUrl: this.getProfilePicUrl(),
       richText: richText,
-      last_edit: timestamp,
+      lastEdit: timestamp,
       timestamp: timestamp
     };
 

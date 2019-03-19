@@ -16,9 +16,14 @@ import Html from "slate-html-serializer";
 //docs slate https://docs.slatejs.org/
 //example links https://github.com/ianstormtaylor/slate/tree/master/examples/links
 
+/**
+ * Deserialize == convert DOM to Slate model
+ * Serialize == convert Slate model to DOM
+ *
+ * @type {Object}
+ */
 const rules = [
   {
-    /* Deserialize == convert DOM to Slate model*/
     deserialize(el, next) {
       const BLOCK_TAGS = {
         blockquote: "blockquote",
@@ -41,7 +46,7 @@ const rules = [
             data: { href: el.getAttribute("href") },
             nodes: next(el.childNodes)
           };
-          return obj
+          return obj;
         } else {
           return {
             object: "block",
@@ -52,7 +57,6 @@ const rules = [
         }
       }
     },
-    /* Serialize == convert Slate model to DOM*/
     serialize(obj, children) {
       //console.log("serialize block/inline. obj.object:", obj.object, obj.toJSON());
       if (obj.object === "inline") {
@@ -96,7 +100,6 @@ const rules = [
   },
   {
     deserialize(el, next) {
-      // Add a dictionary of mark tags.
       const MARK_TAGS = {
         em: "italic",
         strong: "bold",
@@ -131,7 +134,10 @@ const rules = [
   }
 ];
 
-// Create a new serializer instance with our 'rules'
+/**
+ * Create a new serializer instance with our 'rules'
+ *  @type {Html}
+ */
 const html = new Html({ rules });
 
 /**
@@ -140,7 +146,6 @@ const html = new Html({ rules });
  * @param {Editor} editor
  * @param {String} href
  */
-
 function wrapLink(editor, href) {
   editor.wrapInline({
     type: "link",
@@ -188,7 +193,7 @@ class TextEditor extends React.Component {
     const value = Value.fromJSON(html.deserialize(nextProps.initialRichText));
     const plainText = Plain.serialize(value);
     //console.log('  plainText:', plainText)
-    const valueHtml = nextProps.initialRichText
+    const valueHtml = nextProps.initialRichText;
     //console.log('  valueHtml:', valueHtml)
     this.setState({ value, plainText, valueHtml });
   }
@@ -198,12 +203,16 @@ class TextEditor extends React.Component {
    *
    * @return {Boolean} hasLinks
    */
-
   hasLinks = () => {
     const { value } = this.state;
     return value.inlines.some(inline => inline.type === "link");
   };
 
+  /**
+   * Render the app.
+   *
+   * @return {Element} element
+   */
   render() {
     const textareaHeight = {
       height: "8em"
@@ -460,9 +469,7 @@ class TextEditor extends React.Component {
       }
       editor.command(wrapLink, href);
     } else {
-      const href = window.prompt(
-        "Enter the URL of the link:"
-      );
+      const href = window.prompt("Enter the URL of the link:");
       if (href == null) {
         return;
       }

@@ -3,6 +3,7 @@ import firebase from "../Firebase";
 import { Link } from "react-router-dom";
 import Reply from "./Reply";
 import Comment from "./Comment";
+import {deleteComment} from "../Scripts/firebaseCRUD";
 
 class Post extends Component {
   state = {
@@ -53,28 +54,19 @@ class Post extends Component {
       console.log('prevProps:', prevProps)
       console.log('this.props:', this.props)
     }
-    if (this.state.post.last_edit !== prevState.last_edit) {
+    if (this.state.post.lastEdit !== prevState.lastEdit) {
       console.log('prevState:', prevState)
       console.log('this.state:', this.state)
       //this.setState()
     }
   }*/
 
-  /*
-  delete(id) {
-    firebase
-      .firestore()
-      .collection("posts")
-      .doc(id)
-      .delete()
-      .then(() => {
-        console.log("Document successfully deleted!");
-        this.props.history.push("/");
-      })
-      .catch(error => {
-        console.error("Error removing document: ", error);
-      });
-  }*/
+  deleteCallback = (post_key, commentid) => {
+    console.log("deleteCallback(post_key, commentid):", post_key, commentid);
+    deleteComment(post_key, commentid);
+    this.props.history.push(`/`);
+    //, window.location.reload()
+  };
 
   doc2array(comment_array) {
     var array = [];
@@ -121,6 +113,7 @@ class Post extends Component {
                   comment={comment}
                   post_title={this.state.post.title}
                   post_key={this.state.post_key}
+                  deleteCallback={this.deleteCallback}
                 />
               ))}
               <div>

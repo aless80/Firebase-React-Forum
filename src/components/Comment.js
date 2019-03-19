@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 class Comment extends Component {
   profilePicStyle(url) {
     if (!url) {
-      console.error("Could not find picture url for post");
+      //console.error("Could not find picture url for post");
       return undefined;
     }
     if (
@@ -30,6 +30,14 @@ class Comment extends Component {
       padding: "0.0rem"
     };
   }
+  delete() {
+    const res = window.confirm("Do you really want to remove this comment?");
+    if (!res) {
+      return;
+    }
+    this.props.deleteCallback(this.props.post_key, this.props.comment.id);
+
+  }
   render() {
     return (
       <div align="center">
@@ -49,8 +57,7 @@ class Comment extends Component {
                       title={getDateTime(
                         getDateObject(this.props.comment.timestamp)
                       )}
-                    >
-                    </th>
+                    />
                     <th className="thead font-weight-strong border border-left-0">
                       <span className="text-left">
                         {this.props.comment.id > 0 && "Re:"}{" "}
@@ -92,12 +99,29 @@ class Comment extends Component {
                       />
                       <div className="small text-muted">
                         <br />
-                        <div>
+                        <div
+                          title={getDateTime(
+                            getDateObject(this.props.comment.timestamp)
+                          )}
+                        >
                           Posted:
                           {timeDifference(
                             getDateObject(this.props.comment.timestamp)
                           )}
                         </div>
+                        {+getDateObject(this.props.comment.timestamp) !==
+                          +getDateObject(this.props.comment.lastEdit) && (
+                          <div
+                            title={getDateTime(
+                              getDateObject(this.props.comment.lastEdit)
+                            )}
+                          >
+                            Modified:{" "}
+                            {timeDifference(
+                              getDateObject(this.props.comment.lastEdit)
+                            )}
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td
@@ -125,21 +149,20 @@ class Comment extends Component {
                         >
                           edit
                         </Link>
-                        {/*<span>&nbsp;</span>
-                          <a
-                              href="#"
-                              className="close-question-link"
-                              data-isclosed="false"
-                            >
-                              delete
-                            </a>
-                            <span>&nbsp;</span>
-                            <a
-                              href="#"
-                              className="flag-post-link"
-                            >
-                              flag
-                            </a>*/}
+                        <span>&nbsp;</span>
+                        <a type="submit" onClick={() => this.delete()}>
+                          delete
+                        </a>
+                        {/*<Link
+                          to={
+                            "/delete/" +
+                            this.props.post_key +
+                            "/" +
+                            this.props.comment.id
+                          }
+                        >
+                          delete
+                        </Link>*/}
                       </div>
                     </td>
                   </tr>

@@ -50,7 +50,7 @@ class Create extends Component {
         title: title,
         plainText: plainText,
         richText: richText,
-        last_edit: timestamp,
+        lastEdit: timestamp,
         timestamp: timestamp
       })
       .then(docRef => {
@@ -60,7 +60,7 @@ class Create extends Component {
           profilePicUrl: this.getProfilePicUrl(),
           plainText: plainText,
           richText: richText,
-          last_edit: timestamp,
+          lastEdit: timestamp,
           timestamp: timestamp
         };
         // Get document with all comments, push new comment
