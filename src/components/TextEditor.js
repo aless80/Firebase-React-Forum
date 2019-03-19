@@ -8,7 +8,8 @@ import {
   Button,
   Icon,
   Toolbar
-} from "../components";
+} from "./StyledComponents";
+import './TextEditor.css';
 import Plain from "slate-plain-serializer";
 import Html from "slate-html-serializer";
 //https://github.com/wesharehoodies/slate-react-rich-text-editor/tree/part-1

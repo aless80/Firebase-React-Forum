@@ -51,10 +51,23 @@ export const Toolbar = styled(Menu)`
   margin-bottom: 20px;
 `;
 
-export const StyledBlockquote = styled(Menu)`
+/*export const StyledBlockquote = styled(Menu)`
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
   margin-left: 40px;
   margin-right: 40px;
+
+  font-family: Georgia, serif;
+  font-style: italic;
+  width: 500px;
+  line-height: 1.45;
+  position: relative;
+  color: #383838;
+
+  background: lightgray;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
 `;
+*/
