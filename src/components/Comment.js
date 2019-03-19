@@ -50,9 +50,6 @@ class Comment extends Component {
                         getDateObject(this.props.comment.timestamp)
                       )}
                     >
-                      {timeDifference(
-                        getDateObject(this.props.comment.timestamp)
-                      )}
                     </th>
                     <th className="thead font-weight-strong border border-left-0">
                       <span className="text-left">
@@ -93,13 +90,15 @@ class Comment extends Component {
                         )}
                         title={this.props.comment.author}
                       />
-                      {/*<div className="small text-muted">
-                          <br />
-                          <div>Registered: </div>
-                          <div>Latest activity: </div>
-                          Need Admin SDK in priviledge environment
-                          https://firebase.google.com/docs/admin/setup                          
-                        </div>*/}
+                      <div className="small text-muted">
+                        <br />
+                        <div>
+                          Posted:
+                          {timeDifference(
+                            getDateObject(this.props.comment.timestamp)
+                          )}
+                        </div>
+                      </div>
                     </td>
                     <td
                       className={

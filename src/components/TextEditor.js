@@ -2,15 +2,23 @@ import { Editor } from "slate-react";
 import { Value } from "slate";
 import React from "react";
 import { isKeyHotkey } from "is-hotkey";
-import { TextArea, EditorContainer, Button, Icon, Toolbar } from "../components";
+import {
+  TextArea,
+  EditorContainer,
+  Button,
+  Icon,
+  Toolbar
+} from "../components";
 import Plain from "slate-plain-serializer";
 import Html from "slate-html-serializer";
-//
 //https://github.com/wesharehoodies/slate-react-rich-text-editor/tree/part-1
+//github slate https://github.com/ianstormtaylor/slate
+//docs slate https://docs.slatejs.org/
+//example links https://github.com/ianstormtaylor/slate/tree/master/examples/links
 
 const rules = [
   {
-    /* deserialize == convert DOM to Slate model*/
+    /* Deserialize == convert DOM to Slate model*/
     deserialize(el, next) {
       const BLOCK_TAGS = {
         blockquote: "blockquote",
@@ -20,23 +28,42 @@ const rules = [
         h2: "heading-two",
         ol: "numbered-list",
         ul: "bulleted-list",
-        li: "list-item"
+        li: "list-item",
+        a: "link"
       };
       const type = BLOCK_TAGS[el.tagName.toLowerCase()];
-      //console.log('deserialize type:', type)
+      //console.log('deserialize block. type:', type, el.tagName.toLowerCase())
       if (type) {
-        return {
-          object: "block",
-          type: type,
-          data: { className: el.getAttribute("class") },
-          nodes: next(el.childNodes)
-        };
+        if (type === "link") {
+          var obj = {
+            object: "inline",
+            type: type,
+            data: { href: el.getAttribute("href") },
+            nodes: next(el.childNodes)
+          };
+          return obj
+        } else {
+          return {
+            object: "block",
+            type: type,
+            data: { className: el.getAttribute("class") },
+            nodes: next(el.childNodes)
+          };
+        }
       }
     },
-    /* serialize == convert Slate model to DOM*/
+    /* Serialize == convert Slate model to DOM*/
     serialize(obj, children) {
+      //console.log("serialize block/inline. obj.object:", obj.object, obj.toJSON());
+      if (obj.object === "inline") {
+        if (obj.type === "link") {
+          //console.log("  serialize inline obj.toJSON():", obj.toJSON());
+          //this is what gets stored in firebase
+          return <a href={obj.toJSON().data.href}>{children}</a>;
+        }
+      }
       if (obj.object === "block") {
-        //console.log('serialize obj.type:', obj.type)
+        //console.log("  serialize block. obj.type:", obj.type, obj.toJSON());
         switch (obj.type) {
           case "code":
             return (
@@ -73,7 +100,7 @@ const rules = [
       const MARK_TAGS = {
         em: "italic",
         strong: "bold",
-        u: "underlined",
+        u: "underlined"
       };
       const type = MARK_TAGS[el.tagName.toLowerCase()];
       if (type) {
@@ -107,6 +134,31 @@ const rules = [
 // Create a new serializer instance with our 'rules'
 const html = new Html({ rules });
 
+/**
+ * A change helper to standardize wrapping links.
+ *
+ * @param {Editor} editor
+ * @param {String} href
+ */
+
+function wrapLink(editor, href) {
+  editor.wrapInline({
+    type: "link",
+    data: { href }
+  });
+
+  editor.moveToEnd();
+}
+
+/**
+ * A change helper to standardize unwrapping links.
+ *
+ * @param {Editor} editor
+ */
+function unwrapLink(editor) {
+  editor.unwrapInline("link");
+}
+
 class TextEditor extends React.Component {
   /**
    * Store a reference to the `editor`.
@@ -116,13 +168,6 @@ class TextEditor extends React.Component {
   ref = editor => {
     this.editor = editor;
   };
-
-  /**
-   * Deserialize (convert HTML string to Slate object) initialModel prop from parent
-   *
-   * @type {Object}
-   */
-  initialModel = html.deserialize(this.props.initialRichText);
 
   /**
    * State: serialize the initial editor value.
@@ -139,13 +184,25 @@ class TextEditor extends React.Component {
    * @param {*} nextProps
    */
   componentWillReceiveProps(nextProps) {
+    //console.log('\ncomponentWillReceiveProps')
     const value = Value.fromJSON(html.deserialize(nextProps.initialRichText));
-    this.setState({
-      value: value,
-      plainText: Plain.serialize(value),
-      valueHtml: nextProps.initialRichText
-    });
+    const plainText = Plain.serialize(value);
+    //console.log('  plainText:', plainText)
+    const valueHtml = nextProps.initialRichText
+    //console.log('  valueHtml:', valueHtml)
+    this.setState({ value, plainText, valueHtml });
   }
+
+  /**
+   * Check whether the current selection has a link in it.
+   *
+   * @return {Boolean} hasLinks
+   */
+
+  hasLinks = () => {
+    const { value } = this.state;
+    return value.inlines.some(inline => inline.type === "link");
+  };
 
   render() {
     const textareaHeight = {
@@ -164,6 +221,12 @@ class TextEditor extends React.Component {
             {this.renderBlockButton("blockquote", "format_quote")}
             {this.renderBlockButton("numbered-list", "format_list_numbered")}
             {this.renderBlockButton("bulleted-list", "format_list_bulleted")}
+            <Button
+              active={this.hasLinks()}
+              onMouseDown={event => this.onClickLink(event, "looks_two")}
+            >
+              <Icon title="insert_link">insert_link</Icon>
+            </Button>
           </Toolbar>
           <TextArea>
             <Editor
@@ -191,14 +254,20 @@ class TextEditor extends React.Component {
    * @param {Editor} editor
    */
   onChange = ({ value }) => {
+    //console.log('onChange')
     //if (value.document != this.state.value.document) {
-    var plainText = Plain.serialize(value);
+    const plainText = Plain.serialize(value);
+    //console.log('  plainText:', plainText)
     // Show HTML of serialized Slate json
-    var valueHtml = html.serialize(this.state.value);
+    //var valueHtml = html.serialize(value); //this.state.
+    //console.log('valueHtml:', valueHtml)
     // Print Slate json or html string
     //console.log('JSON.stringify(value.toJSON()): ',JSON.stringify(value.toJSON(), null, 4))
     //console.log("valueHtml:", valueHtml);
     // Set state
+    var valueHtml = html.serialize(Value.fromJSON(value));
+    //console.log("valueHtml:", valueHtml);
+    //console.log("  valueHtml:", valueHtml);
     this.setState({ value, plainText, valueHtml });
   };
 
@@ -231,6 +300,8 @@ class TextEditor extends React.Component {
    * Render a Slate mark.
    *
    * @param {Object} props
+   * @param {Editor} editor
+   * @param {Function} next
    * @return {Element}
    */
   renderMark = (props, editor, next) => {
@@ -251,6 +322,8 @@ class TextEditor extends React.Component {
    * Deserialize: Render a Slate node/block.
    *
    * @param {Object} props
+   * @param {Editor} editor
+   * @param {Function} next
    * @return {Element}
    */
   renderBlock = (props, editor, next) => {
@@ -270,6 +343,14 @@ class TextEditor extends React.Component {
         return <ul {...attributes}>{children}</ul>;
       case "list-item":
         return <li {...attributes}>{children}</li>;
+      case "link":
+        const { data } = node;
+        const href = data.get("href");
+        return (
+          <a {...attributes} href={href}>
+            {children}
+          </a>
+        );
       default:
         return next();
     }
@@ -297,7 +378,7 @@ class TextEditor extends React.Component {
       <Button
         isActive={isActive}
         onMouseDown={event => this.onClickBlockBtn(event, type)}
-        active={isActive ? 1 : undefined}
+        //active={isActive ? 1 : undefined}
       >
         <Icon title={type}>{icon}</Icon>
       </Button>
@@ -355,6 +436,45 @@ class TextEditor extends React.Component {
   onClickMarkBtn = (event, type) => {
     event.preventDefault();
     this.editor.toggleMark(type);
+  };
+
+  /**
+   * When clicking a link, if the selection has a link in it, remove the link.
+   * Otherwise, add a new link with an href and text.
+   *
+   * @param {Event} event
+   * @param {String} type
+   */
+  onClickLink = (event, type) => {
+    event.preventDefault();
+    const { editor } = this;
+    const { value } = editor;
+    //const { document } = value;
+    const hasLinks = this.hasLinks();
+    if (hasLinks) {
+      editor.command(unwrapLink);
+    } else if (value.selection.isExpanded) {
+      const href = window.prompt("Enter the URL of the link:");
+      if (href == null) {
+        return;
+      }
+      editor.command(wrapLink, href);
+    } else {
+      const href = window.prompt(
+        "Enter the URL of the link:"
+      );
+      if (href == null) {
+        return;
+      }
+      const text = window.prompt("Enter the text for the link:", "My link");
+      if (text == null) {
+        return;
+      }
+      editor
+        .insertText(text)
+        .moveFocusBackward(text.length)
+        .command(wrapLink, href);
+    }
   };
 
   /**

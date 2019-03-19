@@ -5,7 +5,7 @@ import TextEditor from "./TextEditor";
 
 class Create extends Component {
   state = {
-    title: ""
+    title: "Post title"
   };
   fire_posts = firebase.firestore().collection("posts");
   fire_comments = firebase.firestore().collection("comments");
