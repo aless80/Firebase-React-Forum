@@ -26,7 +26,7 @@ export const Button = styled.span`
     props.isActive &&
     css`
       padding: 0px;
-      border: 1px dotted rgb(122, 121, 121);
+      border: 1px solid rgb(122, 121, 121);
       box-shadow: -1px 1px #ccc, -2px 2px #ccc, -3px 3px #ccc, -4px 4px #ccc;
     `};
 `;

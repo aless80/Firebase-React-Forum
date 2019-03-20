@@ -1,50 +1,54 @@
 import React, { Component } from "react";
-import firebase from "../Firebase";
 import { Link } from "react-router-dom";
 import Reply from "./Reply";
 import Comment from "./Comment";
-import { invalidateComment, invalidatePost } from "../Scripts/firebaseCRUD";
+import {
+  invalidateComment,
+  invalidatePost,
+  getPost,
+  getComment
+} from "../Scripts/firebase";
 
 class Post extends Component {
   state = {
     post: {},
     post_key: "",
-    showComment: false,
+    showComment: false, //TODO: 
     isLoading: true
   };
-
-  fire_comment = firebase
-    .firestore()
-    .collection("comments")
-    .doc(this.props.match.params.id);
-
-  fire_post = firebase
-    .firestore()
-    .collection("posts")
-    .doc(this.props.match.params.id);
-
   comment_array = [];
+  unsubscribe = null;
 
   componentDidMount() {
-    this.fire_comment.get().then(doc => {
-      if (doc.exists) {
-        this.comment_array = this.doc2array(doc.data());
-      } else {
-        console.log("No such document!");
-      }
+    getComment(this.props.match.params.id, doc => {
+      this.comment_array = this.doc2array(doc.data());
     });
-    this.fire_post.get().then(doc => {
-      if (doc.exists) {
-        // Set the state
-        this.setState({
-          post: doc.data(),
-          post_key: doc.id,
-          isLoading: false
-        });
-      } else {
-        console.log("No such document!");
-      }
+    getPost(this.props.match.params.id, doc => {
+      // Set the state
+      var data = {        
+        post: doc.data(),
+        post_key: doc.id,
+        isLoading: false,
+      };
+      this.setState({...this.state,...data});
+      // Subscribe to updates of the post
+      //this.unsubscribe = doc.onSnapshot(this.onPostDocumentUpdate);
+      //console.log('this.unsubscribe:', typeof this.unsubscribe, this.unsubscribe)
+
+      //this.unsubscribe = fire_posts.orderBy("timestamp").onSnapshot(this.onPostsCollectionUpdate);
     });
+  }
+
+  onPostDocumentUpdate = documentSnapshot => {
+    this.setState(...this.state,...{
+      post: documentSnapshot.data(),
+      post_key: documentSnapshot.id,
+      isLoading: false
+    });
+  };
+  
+  componentWillUnmount() {
+    //this.unsubscribe();
   }
 
   /*
@@ -63,7 +67,7 @@ class Post extends Component {
 
   deleteCallback = (post_key, commentid) => {
     invalidateComment(post_key, commentid);
-    if (commentid === '1') {      
+    if (commentid === '1') {
       invalidatePost(post_key);
     }
     this.props.history.push(`/`);

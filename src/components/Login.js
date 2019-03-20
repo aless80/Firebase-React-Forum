@@ -1,13 +1,7 @@
 import React, { Component } from "react";
-import firebase from "../Firebase";
 import { Link } from "react-router-dom";
+import { signIn } from "../Scripts/firebase";
 
-// Signs-in in application.
-function signIn() {
-  // Sign in Firebase using popup auth and Google as the identity provider.
-  var provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(provider);
-}
 
 export default class Login extends Component {
   render() {

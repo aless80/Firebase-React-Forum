@@ -1,36 +1,32 @@
 import React, { Component } from "react";
-import firebase from "../Firebase";
 import TextEditor from "./TextEditor";
-import { getUserName, getProfilePicUrl } from "../Scripts/firebaseCRUD"
+import {
+  fire_comments,
+  getUserName,
+  getProfilePicUrl,
+  getServerTimestamp,
+  getPost,
+  updatePost,
+  pushComment
+} from "../Scripts/firebase";
 
 class Reply extends Component {
   state = {
     comment_key: ""
   };
-  fire_post = firebase
-    .firestore()
-    .collection("posts")
-    .doc(this.props.post_key);
-  fire_comment = firebase
-    .firestore()
-    .collection("comments")
-    .doc(this.props.post_key);
+  fire_comment = fire_comments.doc(this.props.post_key);
   refEditor = React.createRef();
-  initialRichText = "<p></p>" // this is rich text (I mean a string with HTML code)
+  initialRichText = "<p></p>"; // this is rich text (I mean a string with HTML code)
 
   componentDidMount() {
-    this.fire_post.get().then(doc => {
-      if (doc.exists) {
-        this.setState({
-          post: doc.data(),
-          post_key: doc.id,
-          comment_key: doc.data().comments + 1,
-          richText: "",
-          isLoading: false
-        });
-      } else {
-        console.error("No such document!");
-      }
+    getPost(this.props.post_key, doc => {
+      this.setState({
+        post: doc.data(),
+        post_key: doc.id,
+        comment_key: doc.data().comments + 1,
+        richText: "",
+        isLoading: false
+      });
     });
   }
 
@@ -38,30 +34,30 @@ class Reply extends Component {
     e.preventDefault();
     const { comment_key } = this.state;
     var richText = this.refEditor.current.state.valueHtml;
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    var plainText = this.refEditor.current.state.plainText;
+    const timestamp = getServerTimestamp();
     var data = {
       author: getUserName(),
+      plainText: plainText,
       profilePicUrl: getProfilePicUrl(),
       richText: richText,
       lastEdit: timestamp,
       timestamp: timestamp
     };
 
-    //not working on fire_comment
-    //this.fire_comment.FieldValue.arrayUnion(data)
-
     /*
+    //not working on fire_comment
+    //fire_comments.doc(this.props.post_key).FieldValue.arrayUnion(data)
+    
     //Add collection. Works, one nesting (2nd document) too much
-    this.fire_comment
+    fire_comments.doc(this.props.post_key)
       .collection(comment_key.toString())
       .add(data);
-    */
 
-    /*
     //Works but overwrites document
     var comment_obj = {}; // {1: {author: 'ale',.. }}
     comment_obj[comment_key] = data;
-    this.fire_comment
+    fire_comments.doc(this.props.post_key)
       .set(comment_obj)
       .then(docRef => {
         //this.props.history.push("/");
@@ -69,10 +65,10 @@ class Reply extends Component {
       })
       .catch(error => {
         console.error("Error adding comment document: ", error);
-      });*/
+      });
 
-    // Get document with all comments, push new comment, save document
-    this.fire_comment
+    //This is what works and is what I am using in pushComment below
+    fire_comments.doc(this.props.post_key)
       .get()
       .then(doc => {
         var document = doc.data();
@@ -86,19 +82,21 @@ class Reply extends Component {
         console.error("Error on getting document: ", error);
         return;
       });
+      */
+
+    pushComment(this.props.post_key, comment_key, data);
 
     // Update number of comments in post collection
-    this.fire_post
-      .update({ comments: this.state.comment_key })
-      .then(docRef => {
+    updatePost(
+      this.props.post_key,
+      { comments: this.state.comment_key },
+      () => {
         // Close Reply menu
         this.props.toggleShowComment();
         // Can I refresh <Comment> children in Show? Well, reload the page
         window.location.reload();
-      })
-      .catch(error => {
-        console.error("Error updating post document: ", error);
-      });
+      }
+    );
   };
 
   /*onChange = e => {
@@ -117,6 +115,7 @@ class Reply extends Component {
             <div className="form-group">
               <div className="border border-dark">
                 <TextEditor
+                  autoFocus
                   ref={this.refEditor}
                   initialRichText={this.initialRichText}
                 />

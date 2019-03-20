@@ -388,7 +388,6 @@ class TextEditor extends React.Component {
       <Button
         isActive={isActive}
         onMouseDown={event => this.onClickBlockBtn(event, type)}
-        //active={isActive ? 1 : undefined}
       >
         <Icon title={type}>{icon}</Icon>
       </Button>

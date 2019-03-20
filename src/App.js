@@ -6,7 +6,8 @@ import Edit from "./components/Edit";
 import Create from "./components/Create";
 import Post from "./components/Post";
 import Navbar from "./components/Navbar";
-import firebase from "./Firebase";
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
 
 // Secure routes
 function AuthenticatedRoute({
@@ -69,28 +70,28 @@ export default class App extends Component {
                 redirect="/"
                 component={Login}
               />
-              {/* FIXME: NB duplicate route. Normal Routes are handy for debugging*/}
-              <Route exact path="/create" component={Create} />
+              {/* FIXME: NB duplicate route. Normal Routes are handy for debugging
+              <Route exact path="/create" component={Create} /> */}
               <AuthenticatedRoute
                 exact
-                path="/create2"
+                path="/create"
                 authenticated={this.state.user != null}
                 component={Create}
-              />
+              />*/}
               <Route
                 exact
                 path="/post/:id"
                 render={props => <Post {...props} />}
               />
-              {/* FIXME: NB duplicate route. Normal Routes are handy for debugging*/}
+              {/* FIXME: NB duplicate route. Normal Routes are handy for debugging
               <Route
                 exact
                 path="/edit/:postkey/:commentid"
                 render={props => <Edit {...props} />}
-              />
+              />*/}
               <AuthenticatedRoute
                 exact
-                path="/edit2/:postkey/:commentid"
+                path="/edit/:postkey/:commentid"
                 authenticated={this.state.user != null}
                 component={Edit}
               />

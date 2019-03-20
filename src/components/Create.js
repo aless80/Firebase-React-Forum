@@ -1,16 +1,18 @@
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
-import firebase from "../Firebase";
 import { Link } from "react-router-dom";
 import TextEditor from "./TextEditor";
-import { getUserName, getProfilePicUrl } from "../Scripts/firebaseCRUD"
+import { getUserName, getProfilePicUrl } from "../Scripts/firebase";
+import {
+  fire_posts,
+  pushComment,
+  getServerTimestamp
+} from "../Scripts/firebase";
 
 class Create extends Component {
   state = {
     title: "Post title"
   };
-  fire_posts = firebase.firestore().collection("posts");
-  fire_comments = firebase.firestore().collection("comments");
+
   //.doc(this.props.post_key);
   refEditor = React.createRef();
   initialRichText = "<p></p>"; // this is rich text (I mean a string with HTML code)
@@ -31,15 +33,14 @@ class Create extends Component {
     e.preventDefault();
     var author = getUserName();
     var profilePicUrl = getProfilePicUrl();
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-    this.fire_posts
+    const timestamp = getServerTimestamp();
+    fire_posts
       .add({
         author: author,
         comments: 1,
         profilePicUrl: profilePicUrl,
         title: title,
         plainText: plainText,
-        richText: richText,
         lastEdit: timestamp,
         timestamp: timestamp
       })
@@ -54,8 +55,7 @@ class Create extends Component {
           timestamp: timestamp
         };
         // Get document with all comments, push new comment
-        var fire_comment = this.fire_comments.doc(post_key);
-        this.addComment(fire_comment, 1, data);
+        pushComment(post_key, 1, data);
         this.setState({
           title: ""
         });
@@ -66,24 +66,6 @@ class Create extends Component {
         console.error("Error adding Post: ", error);
       });
   };
-
-  // Push a new comment to firebase
-  addComment(fire_comment_doc, id, data) {
-    fire_comment_doc
-      .get()
-      .then(doc => {
-        var document = doc.data();
-        if (!document) document = {};
-        document[id] = data;
-        fire_comment_doc.set(document).catch(error => {
-          console.error("Error on setting comment: ", error);
-        });
-      })
-      .catch(error => {
-        console.error("Error on getting comment: ", error);
-        return;
-      });
-  }
 
   render() {
     //const { title, plainText, richText } = this.state;
@@ -131,8 +113,4 @@ class Create extends Component {
   }
 }
 
-Create.propTypes = {
-  ref: PropTypes.array.isRequired,
-  initialRichText: PropTypes.string.isRequired,
-}
 export default Create;

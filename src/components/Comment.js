@@ -5,7 +5,7 @@ import {
   timeDifference
 } from "../Scripts/utilities";
 import { Link } from "react-router-dom";
-import { getUserName, profilePicStyle } from "../Scripts/firebaseCRUD";
+import { getUserName, profilePicStyle } from "../Scripts/firebase";
 
 class Comment extends Component {
   delete() {

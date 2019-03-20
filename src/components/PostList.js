@@ -1,28 +1,28 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import firebase from "../Firebase";
 import {
   truncate,
   getDateObject,
   getDateTime,
   timeDifference
 } from "../Scripts/utilities";
-import { profilePicStyle } from "../Scripts/firebaseCRUD";
+import { fire_posts, profilePicStyle } from "../Scripts/firebase";
 
 export const TRUNCATION_LIMIT = 290;
 
 class PostList extends Component {
-  fire_posts = firebase
-    .firestore()
-    .collection("posts")
-    .orderBy("timestamp");
   unsubscribe = null;
   state = {
     posts: [],
     isLoading: true
   };
 
-  onCollectionUpdate = querySnapshot => {
+  componentDidMount() {
+    //Get the posts now and subscribe to updates
+    this.unsubscribe = fire_posts.orderBy("timestamp").onSnapshot(this.onPostsCollectionUpdate);
+  }
+
+  onPostsCollectionUpdate = querySnapshot => {
     const posts = [];
     querySnapshot.forEach(doc => {
       posts.push({ ...doc.data(), key: doc.id });
@@ -33,10 +33,6 @@ class PostList extends Component {
     });
   };
 
-  componentDidMount() {
-    //Get the posts now
-    this.unsubscribe = this.fire_posts.onSnapshot(this.onCollectionUpdate);
-  }
   componentWillUnmount() {
     this.unsubscribe();
   }
@@ -117,14 +113,6 @@ class PostList extends Component {
             )}
             <div>
               <br />
-              {/*<button
-                  onClick={() => 1}
-                  className="btn btn-bgn ml-1"
-                >
-                  New Post
-                </button>
-                */}
-
               <Link to="/create" className="btn btn-bgn">
                 New Post
               </Link>
