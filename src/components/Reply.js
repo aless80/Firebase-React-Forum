@@ -92,7 +92,7 @@ class Reply extends Component {
       { comments: this.state.comment_key },
       () => {
         // Close Reply menu
-        this.props.toggleShowComment();
+        this.props.toggleShowReply();
         // Can I refresh <Comment> children in Show? Well, reload the page
         window.location.reload();
       }
@@ -100,9 +100,7 @@ class Reply extends Component {
   };
 
   /*onChange = e => {
-    const state = {...this.state};
-    state[e.target.name] = e.target.value;
-    this.setState(state);
+    this.setState({ ...this.state, [e.target.name]: e.target.value });
   };*/
 
   render() {
@@ -128,7 +126,7 @@ class Reply extends Component {
               <button
                 type="submit"
                 className="btn btn-bgn ml-1"
-                onClick={() => this.props.toggleShowComment()}
+                onClick={() => this.props.toggleShowReply()}
               >
                 Cancel
               </button>

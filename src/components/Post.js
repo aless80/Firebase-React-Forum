@@ -15,8 +15,9 @@ class Post extends Component {
     post: {},
     post_key: "",
     comment_array: [],
-    showComment: false, //TODO:
-    isLoading: true
+    showReply: false,
+    isLoading: true,
+    title: ""
   };
   //comment_array = [];
   unsubscribe = null;
@@ -39,13 +40,19 @@ class Post extends Component {
     });
   }
 
-  onPostDocumentUpdate = documentSnapshot => {
-    console.log("onPostDocumentUpdate", documentSnapshot);
+  // Keep comments' text and title up to date. 
+  // This is achieved by having 1) the onSnapshot subscription above; 2) comment_array and title in state; 3) this callback modifying comment_array and title
+  onPostDocumentUpdate = () => {
+    // Update comments
     getComment(this.props.match.params.id, doc => {
-      var comment_array = this.doc2array(doc.data());
-      this.setState({...this.state, comment_array: comment_array})
-      console.log('this.comment_array:', comment_array)
+      const comment_array = this.doc2array(doc.data());
+      this.setState({...this.state, comment_array: comment_array })
     });
+    // Update post title
+    getPost(this.props.match.params.id, doc => {
+      const post = doc.data()
+      this.setState({ ...this.state.post, post: post })
+    })
   };
 
   componentWillUnmount() {
@@ -86,13 +93,11 @@ class Post extends Component {
   }
 
   reply(id) {
-    this.toggleShowComment();
+    this.toggleShowReply();
   }
 
-  toggleShowComment() {
-    const state = { ...this.state };
-    state["showComment"] = !state["showComment"];
-    this.setState(state);
+  toggleShowReply() {
+    this.setState({ ...this.state, showReply: !this.state.showReply });
   }
 
   render() {
@@ -123,7 +128,7 @@ class Post extends Component {
                 />
               ))}
               <div>
-                {!this.state.showComment && (
+                {!this.state.showReply && (
                   <button
                     onClick={() => this.reply(this.state.key)}
                     className="btn btn-bgn ml-0"
@@ -138,10 +143,10 @@ class Post extends Component {
         </div>
         <br />
         <div>
-          {this.state.showComment && (
+          {this.state.showReply && (
             <Reply
               post_key={this.props.match.params.id}
-              toggleShowComment={() => this.toggleShowComment()}
+              toggleShowReply={() => this.toggleShowReply()}
             />
           )}
         </div>
