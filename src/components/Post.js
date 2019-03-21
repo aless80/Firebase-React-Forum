@@ -6,49 +6,50 @@ import {
   invalidateComment,
   invalidatePost,
   getPost,
-  getComment
+  getComment,
+  fire_posts
 } from "../Scripts/firebase";
 
 class Post extends Component {
   state = {
     post: {},
     post_key: "",
-    showComment: false, //TODO: 
+    comment_array: [],
+    showComment: false, //TODO:
     isLoading: true
   };
-  comment_array = [];
+  //comment_array = [];
   unsubscribe = null;
 
   componentDidMount() {
     getComment(this.props.match.params.id, doc => {
-      this.comment_array = this.doc2array(doc.data());
+      const comment_array = this.doc2array(doc.data());
+      this.setState({...this.state, comment_array: comment_array})
     });
     getPost(this.props.match.params.id, doc => {
       // Set the state
-      var data = {        
+      var data = {
         post: doc.data(),
         post_key: doc.id,
-        isLoading: false,
+        isLoading: false
       };
-      this.setState({...this.state,...data});
+      this.setState({ ...this.state, ...data });
       // Subscribe to updates of the post
-      //this.unsubscribe = doc.onSnapshot(this.onPostDocumentUpdate);
-      //console.log('this.unsubscribe:', typeof this.unsubscribe, this.unsubscribe)
-
-      //this.unsubscribe = fire_posts.orderBy("timestamp").onSnapshot(this.onPostsCollectionUpdate);
+      this.unsubscribe = fire_posts.doc(this.props.match.params.id).onSnapshot(this.onPostDocumentUpdate);
     });
   }
 
   onPostDocumentUpdate = documentSnapshot => {
-    this.setState(...this.state,...{
-      post: documentSnapshot.data(),
-      post_key: documentSnapshot.id,
-      isLoading: false
+    console.log("onPostDocumentUpdate", documentSnapshot);
+    getComment(this.props.match.params.id, doc => {
+      var comment_array = this.doc2array(doc.data());
+      this.setState({...this.state, comment_array: comment_array})
+      console.log('this.comment_array:', comment_array)
     });
   };
-  
+
   componentWillUnmount() {
-    //this.unsubscribe();
+    this.unsubscribe();
   }
 
   /*
@@ -67,7 +68,7 @@ class Post extends Component {
 
   deleteCallback = (post_key, commentid) => {
     invalidateComment(post_key, commentid);
-    if (commentid === '1') {
+    if (commentid === "1") {
       invalidatePost(post_key);
     }
     this.props.history.push(`/`);
@@ -112,7 +113,7 @@ class Post extends Component {
             </div>
             <div className="panel-body">
               {isLoading && <div className="spinner" />}
-              {this.comment_array.map(comment => (
+              {this.state.comment_array.map(comment => (
                 <Comment
                   key={comment.id}
                   comment={comment}
