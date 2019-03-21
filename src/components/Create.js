@@ -27,6 +27,16 @@ class Create extends Component {
     var richText = this.refEditor.current.state.valueHtml;
     var plainText = this.refEditor.current.state.plainText;
     const { title } = this.state;
+    if (plainText === "" || richText === "") {
+      alert("Text cannot be empty");
+      e.preventDefault();
+      return
+    }
+    if (title === "") {
+      alert("Title cannot be empty");
+      e.preventDefault();
+      return
+    }
     // Send to Firebase
     e.preventDefault();
     var author = getUserName();

@@ -77,7 +77,6 @@ class Edit extends Component {
       plainText: "",
       richText: ""
     });
-    //TODO: does not refresh after editing
     this.props.history.push("/post/" + this.props.match.params.postkey);
   };
 

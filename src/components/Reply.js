@@ -35,6 +35,11 @@ class Reply extends Component {
     const { comment_key } = this.state;
     var richText = this.refEditor.current.state.valueHtml;
     var plainText = this.refEditor.current.state.plainText;
+    if (plainText === "" || richText === "") {
+      alert("Text cannot be empty");
+      e.preventDefault();
+      return
+    }
     const timestamp = getServerTimestamp();
     var data = {
       author: getUserName(),
