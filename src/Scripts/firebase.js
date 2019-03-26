@@ -1,9 +1,8 @@
 import firebase from "../Firebase";
-import { getDateObject } from "../Scripts/utilities"
 
 /**
  * Cloud Storage
- * 
+ *
  * @return {Object}
  */
 export const storage = firebase.storage();
@@ -16,7 +15,12 @@ export const storage = firebase.storage();
  * @param {UploadMetadata} metadata - Metadata for the newly uploaded object
  * @callback [onSuccessfulUpload] - Function to be called when the file is successfully uploaded
  */
-export const uploadToStorage = (file, onSuccessfulUpload, metadata = {}) => {
+export const uploadToStorage = (
+  file,
+  onUploadProgress,
+  onSuccessfulUpload,
+  metadata = {}
+) => {
   //TODO: check if it exists! If it does, change name
   var ref = storage.ref("images").child(file.name);
   // Example for metadata
@@ -29,12 +33,17 @@ export const uploadToStorage = (file, onSuccessfulUpload, metadata = {}) => {
   // 1. 'state_changed' observer, called any time the state changes
   // 2. Error observer, called on failure
   // 3. Completion observer, called on successful completion
+
   uploadTask.on(
     "state_changed",
     snapshot => {
       // Observe state change events such as progress, pause, and resume
       // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-      //var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      var uploadProgress =
+        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      if (onUploadProgress) {
+        onUploadProgress(uploadProgress);
+      }
       switch (snapshot.state) {
         case "paused":
           console.log("Upload is paused");
@@ -44,36 +53,38 @@ export const uploadToStorage = (file, onSuccessfulUpload, metadata = {}) => {
         default:
           break;
       }
+      return uploadProgress;
     },
     error => {
-      console.log("error:", error);
+      console.error("error:", error);
       // A full list of error codes is available at
       // https://firebase.google.com/docs/storage/web/handle-errors
+      let msg = "";
       switch (error.code) {
         case "storage/unauthorized":
-          console.error(
-            "User does not have permission to access the object:",
-            error.code
-          );
+          msg =
+            "User does not have permission to access the object:" + error.code;
           break;
         case "storage/canceled":
-          console.error("User canceled the upload:", error.code);
+          msg = "User canceled the upload:" + error.code;
           break;
         case "storage/unknown":
-          console.error(
-            "Unknown error occurred, inspect error.serverResponse:",
-            error.code
-          );
+          msg =
+            "Unknown error occurred, inspect error.serverResponse:" +
+            error.code;
           break;
         default:
-          console.error(
-            "Unknown error occurred, inspect error.serverResponse:",
-            error.code
-          );
+          msg =
+            "Unknown error occurred, inspect error.serverResponse:" +
+            error.code;
           break;
       }
+      console.error(msg);
+      //Unsubscribe after error
+      uploadTask();
+      return error;
     },
-    () => {
+    complete => {
       // Handle successful uploads on complete
       // For instance, get the download URL: https://firebasestorage.googleapis.com/...
       uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
@@ -81,6 +92,8 @@ export const uploadToStorage = (file, onSuccessfulUpload, metadata = {}) => {
           onSuccessfulUpload(downloadURL);
         }
       });
+      //Unsubscribe after complete
+      uploadTask();
     }
   );
   return uploadTask;

@@ -17,6 +17,7 @@ import Plain from "slate-plain-serializer";
 import Html from "slate-html-serializer";
 import imageExtensions from "image-extensions";
 import { uploadToStorage } from "../Scripts/firebase";
+import { Progress } from "reactstrap";
 
 //https://github.com/wesharehoodies/slate-react-rich-text-editor/tree/part-1
 //github slate https://github.com/ianstormtaylor/slate
@@ -288,7 +289,8 @@ class TextEditor extends React.Component {
   state = {
     value: Value.fromJSON(html.deserialize("")),
     plainText: "",
-    valueHtml: ""
+    valueHtml: "",
+    uploadProgress: 0
   };
 
   /**
@@ -299,7 +301,7 @@ class TextEditor extends React.Component {
     const value = Value.fromJSON(html.deserialize(nextProps.initialRichText));
     const plainText = Plain.serialize(value);
     const valueHtml = nextProps.initialRichText;
-    this.setState({ value, plainText, valueHtml });
+    this.setState({ ...this.state, value, plainText, valueHtml });
   }
 
   /**
@@ -316,7 +318,7 @@ class TextEditor extends React.Component {
     var inputField = this.refs.fileField;
     inputField.click();
   };
-  
+
   /**
    * Render the app.
    *
@@ -336,16 +338,18 @@ class TextEditor extends React.Component {
             {this.renderBlockButton("blockquote", "format_quote")}
             {this.renderBlockButton("numbered-list", "format_list_numbered")}
             {this.renderBlockButton("bulleted-list", "format_list_bulleted")}
+            {/* Insert link */}
             <Button
               active={this.hasLinks()}
               onMouseDown={event => this.onClickLink(event, "looks_two")}
             >
               <Icon title="insert_link">insert_link</Icon>
             </Button>
+            {/* Insert image URL */}
             <Button onMouseDown={this.onClickImageUrl}>
               <Icon title="Insert image url">image</Icon>
             </Button>
-
+            {/* Upload image */}
             <div className="element">
               <Icon
                 title="Insert image url"
@@ -365,6 +369,18 @@ class TextEditor extends React.Component {
                 onChange={event => this.onChangeInput(event)}
               />
             </div>
+            {/* Progress bar of Upload image */}
+            {this.state.uploadProgress < 100 && (
+              <Progress
+                animated
+                value={this.state.uploadProgress}
+                color="info"
+                max={100}
+                style={{ width: "200px" }}
+              >
+                {this.state.uploadProgress.toFixed(0)}
+              </Progress>
+            )}
           </Toolbar>
           <TextArea>
             <Editor
@@ -411,7 +427,7 @@ class TextEditor extends React.Component {
     var valueHtml = html.serialize(Value.fromJSON(value));
     //console.log("valueHtml:", valueHtml);
     //console.log("  valueHtml:", valueHtml);
-    this.setState({ value, plainText, valueHtml });
+    this.setState({ ...this.state, value, plainText, valueHtml });
   };
 
   /**
@@ -744,8 +760,12 @@ class TextEditor extends React.Component {
       const reader = new FileReader();
       const [mime] = file.type.split("/");
       if (mime !== "image") continue;
+      //Callback to update the progress bar during the upload
+      const onUploadProgress = uploadProgress => {
+        this.setState({ ...this.state, uploadProgress });
+      };
       //Callback to insert block in Slate model with src, the image's location in firebase
-      const callback = src => {
+      const onSuccessfulUpload = src => {
         editor.insertBlock({
           type: "image",
           data: { src }
@@ -758,7 +778,12 @@ class TextEditor extends React.Component {
         //This saves image in <img> element, which becomes big (too many chars) for firebase
         //editor.command(this.insertImageUrl, reader.result, target);
         // Save file to firebase,
-        editor.command(this.insertImage2Firebase, file, callback);
+        editor.command(
+          this.insertImage2Firebase,
+          file,
+          onUploadProgress,
+          onSuccessfulUpload
+        );
       });
       reader.readAsDataURL(file);
     }
@@ -773,12 +798,18 @@ class TextEditor extends React.Component {
    * @param {Range} target
    * @param {String} filename
    */
-  insertImage2Firebase = (editor, file, callback) => {
+  insertImage2Firebase = (
+    editor,
+    file,
+    onUploadProgress = undefined,
+    onSuccessfulUpload = undefined
+  ) => {
     var metadata = {
       contentType: file.type,
       customMetadata: { status: "draft" }
     };
-    uploadToStorage(file, callback, metadata);
+    // Upload to Storage passing callbacks. Note that unregister is called in function on complete or on error
+    uploadToStorage(file, onUploadProgress, onSuccessfulUpload, metadata);
   };
 }
 

@@ -77,7 +77,7 @@ export default class App extends Component {
                 path="/create"
                 authenticated={this.state.user != null}
                 component={Create}
-              />*/}
+              />
               <Route
                 exact
                 path="/post/:id"
