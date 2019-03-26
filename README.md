@@ -61,15 +61,11 @@ members: {
 ```
 
 ## Todo
-* upload images: 
-  store using post_key 
 * dynamically query posts by eg date, user, etc
-* style css (eg no underscore)
 * focus on texteditor in Reply component
 * JSDoc http://usejsdoc.org/about-getting-started.htm
 * firebase storage and upload images from TextEditor
 * propTypes - skip?
-* push history insetead of link?
 * add close and status to posts?
 * add categories to posts?
 

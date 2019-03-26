@@ -50,7 +50,7 @@ class PostList extends Component {
           <div className="panel-body">
             {isLoading && <div className="spinner" />}
             {!isLoading && (
-              <div className="table-posts">
+              <div className="tablePosts">
                 <table className="table mb-0">
                   <thead>
                     <tr>
@@ -74,7 +74,7 @@ class PostList extends Component {
                           {post.profilePicUrl ? (
                             <td>
                               <div
-                                className="profile-pic"
+                                className="profilePic"
                                 style={profilePicStyle(post.profilePicUrl)}
                                 title={post.author}
                               />
@@ -82,7 +82,7 @@ class PostList extends Component {
                           ) : (
                             <td>
                               <div
-                                className="material-icons md-36 profile-pic"
+                                className="material-icons md-36 profilePic"
                                 title="The author deleted this post"
                               >
                                 account_circle
@@ -92,7 +92,7 @@ class PostList extends Component {
                           <td>
                             <Link
                               to={`/post/${post.key}`}
-                              className="post-title"
+                              className="postTitle"
                             >
                               {post.title}
                             </Link>

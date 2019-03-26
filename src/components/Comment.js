@@ -30,7 +30,7 @@ class Comment extends Component {
     };
     return (
       <div align="center">
-        <div className="comment-page text-left w-100">
+        <div className="commentpage text-left w-100">
           <div className="p-0" align="left">
             <div id={"edit" + this.props.comment.id} className="p-0">
               <table
@@ -76,14 +76,17 @@ class Comment extends Component {
                     >
                       <div id={"postmenu-" + this.props.comment.id}>
                         <div className="font-weight-strong">
-                          {this.props.comment.author ? (<strong>{this.props.comment.author}</strong>) : 
-                          (<strong>&nbsp;</strong>)}
+                          {this.props.comment.author ? (
+                            <strong>{this.props.comment.author}</strong>
+                          ) : (
+                            <strong>&nbsp;</strong>
+                          )}
                         </div>
                       </div>
 
                       {this.props.comment.profilePicUrl ? (
                         <div
-                          className="profile-pic"
+                          className="profilePic"
                           style={profilePicStyle(
                             this.props.comment.profilePicUrl,
                             imageStyle
@@ -92,7 +95,7 @@ class Comment extends Component {
                         />
                       ) : (
                         <div
-                          className="material-icons md-42 profile-pic"
+                          className="material-icons md-42 profilePic"
                           style={imageStyle}
                           title="The author deleted this comment"
                         >
@@ -127,6 +130,7 @@ class Comment extends Component {
                         )}
                       </div>
                     </td>
+
                     <td
                       className={
                         "alt" +
@@ -136,14 +140,29 @@ class Comment extends Component {
                       id={"td-post-" + this.props.comment.id}
                     >
                       <div
-                      className="post-message"
-                        id={"post-message-" + this.props.comment.id}
+                        className="postRichText"
+                        id={"postRichText-" + this.props.comment.id}
                         dangerouslySetInnerHTML={{
                           __html: this.props.comment.richText
                         }}
                       />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      className={"alt" + ((this.props.comment.id % 2) + 1)}
+                      width="175"
+                    />
+                    <td
+                      className={
+                        "alt" +
+                        ((this.props.comment.id % 2) + 1) +
+                        " border relative"
+                      }
+                      id={"td-menu-" + this.props.comment.id}
+                    >
                       {this.props.comment.author === getUserName() && (
-                        <div className="post-menu small text-muted bottom-right">
+                        <div className="postmenu small text-muted bottom-right">
                           <Link
                             to={
                               "/edit/" +

@@ -13,15 +13,15 @@ body {
   background-image: linear-gradient(to bottom, #5a684b, #7d9169);
   color: #fff;
 }
-.table-posts thead tr {
+.tablePosts thead tr {
   color: #fff;
   font-weight: normal;
 }
-.table-posts th {
+.tablePosts th {
   border-top: 0;
   padding: 0.5rem;
 }
-.table-posts tr {
+.tablePosts tr {
   border-top-color: #ffffff;
   border-bottom-color: #608f00;
   color: #444c3c;
@@ -30,19 +30,18 @@ body {
   border-bottom: 1px solid green;
   border-bottom-color: green;
 }
-.table-posts td {
+.tablePosts td {
   border-top: 0;
-  /*padding: 0.5rem;*/
   padding: 0.75rem;
   vertical-align: middle;
 }
-.table-posts tbody tr.alt1:hover,
+.tablePosts tbody tr.alt1:hover,
 tr.alt2:hover {
   background-color: #f6f4d0;
 }
 
-.table-posts td .material-icons {
-  /* I hope this holds. Te account_circle icon is not centered? */
+.tablePosts td .material-icons {
+  /* I hope this holds. The account_circle icon is not centered? */
   margin-left: 4px;
 }
 
@@ -56,7 +55,7 @@ tr.alt2:hover {
   color: #000000;
 }
 
-.table-posts {
+.tablePosts {
   background-color: #59674b;
   background-image: linear-gradient(
     to bottom,
@@ -66,14 +65,14 @@ tr.alt2:hover {
   );
   background-repeat: repeat-x;
 }
-.table-posts {
+.tablePosts {
   margin-bottom: 4px;
   padding: 5px;
   clear: both;
   border-radius: 7px;
 }
 
-.post-title:hover {
+.postTitle:hover {
   text-decoration: underline;
   text-decoration-line: underline;
   text-decoration-style: solid;
@@ -92,7 +91,7 @@ code {
 .alt2 {
   background: #ffffff;
 }
-.profile-pic {
+.profilePic {
   position: relative;
   display: inline-block;
   background-repeat: no-repeat;
@@ -106,41 +105,8 @@ code {
   padding: 0.5rem;
 }
 
-/* Copied stuff I think
-.App {
-  text-align: center;
-}
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
-}
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-.App-link {
-  color: #61dafb;
-}
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-*/
-
 /* Navbar component */
 .navbar {
-  /*background-color: #677857;*/
   background-image: linear-gradient(to bottom, #5a684b, #7d9169);
 }
 
@@ -184,7 +150,7 @@ code {
 }
 
 /* Comment component*/
-.comment-page {
+.commentpage {
   background: #ffffff;
   background-color: rgb(255, 255, 255);
   background-position-x: 0%;
@@ -195,13 +161,16 @@ code {
   background-size: auto;
   background-origin: padding-box;
   background-clip: border-box;
-  /*color: #000000;*/
   border: 1px solid #000000;
+  overflow: hidden;
+  display: block;
+}
+.commentpage .postRichText {
   overflow: auto;
   max-width: 1196px;
   max-height: 806px;
 }
-.comment-page .tborder {
+.commentpage .tborder {
   background: #ffffff;
   background-color: rgb(255, 255, 255);
   background-position-x: 0%;
@@ -212,33 +181,34 @@ code {
   background-size: auto;
   background-origin: padding-box;
   background-clip: border-box;
-  /*color: #000000;*/
   border: 1px solid #000000;
 }
-.comment-page th.thead,
+.commentpage th.thead,
 div.thead {
   padding: 4px;
 }
-.comment-page .thead {
+.commentpage .thead {
   background-image: linear-gradient(to bottom, #90aa75, #c4dcab);
   font-size: 11px;
   font-weight: bold;
 }
-.comment-page .alt1 {
+.commentpage .alt1 {
   background: #e0edd3;
   color: #444c3c;
   font-size: 10pt;
   padding: 3px;
   border: 1px solid #dee2e6;
+  border-bottom: hidden;
 }
-.comment-page .alt2 {
+.commentpage .alt2 {
   background: #f6f4d0;
   color: #444c3c;
   font-size: 10pt;
   padding: 3px;
   border: 1px solid #dee2e6;
+  border-bottom: hidden;
 }
-.comment-page td {
+.commentpage td {
   border: 1px solid #f6f4d0;
   border-top-color: rgb(255, 255, 255);
   border-top-style: solid;
@@ -249,18 +219,18 @@ div.thead {
   border-top: 0px;
   border-bottom: 0px;
 }
-.comment-page .post-menu {
+.commentpage .postmenu {
   padding-top: 2px;
   text-align: right;
   vertical-align: bottom;
 }
-.comment-page .post-menu > a {
+.commentpage .postmenu > a {
   padding: 0 3px 2px;
   color: #848d95;
   vertical-align: bottom;
 }
 
-.comment-page .link-button {
+.commentpage .link-button {
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -272,28 +242,21 @@ div.thead {
   color: rgb(132, 141, 149);
 }
 
-.comment-page .link-button:hover {
+.commentpage .link-button:hover {
   text-decoration: underline;
 }
 
-.comment-page .profile-pic {
+.commentpage .profilePic {
   top: 13px;
 }
 
-/*
-.inner {
-  display: table-cell;
-  text-align: right;
-  bottom: 0;
-}*/
-.relative {
+.commentpage .relative {
   position: relative;
 }
-.bottom-right {
-  position: absolute;
+.commentpage .bottom-right {
+  /*position: absolute;*/
   bottom: 0;
   right: 0;
-
   text-align: right;
   vertical-align: bottom;
 }
