@@ -62,9 +62,8 @@ members: {
 
 ## Todo
 * upload images: 
-  hash to protect images with same name
-  max size
-  subscribe to observable from storage
+  store using post_key 
+* dynamically query posts by eg date, user, etc
 * style css (eg no underscore)
 * focus on texteditor in Reply component
 * JSDoc http://usejsdoc.org/about-getting-started.htm

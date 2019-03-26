@@ -104,10 +104,6 @@ class Reply extends Component {
     );
   };
 
-  /*onChange = e => {
-    this.setState({ ...this.state, [e.target.name]: e.target.value });
-  };*/
-
   render() {
     //const { richText } = this.state;
     return (
@@ -121,6 +117,7 @@ class Reply extends Component {
                   autoFocus
                   ref={this.refEditor}
                   initialRichText={this.initialRichText}
+                  height="10em"
                 />
               </div>
             </div>

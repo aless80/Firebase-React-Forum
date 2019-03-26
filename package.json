@@ -15,6 +15,7 @@
     "react-scripts": "2.1.5",
     "reactstrap": "^7.1.0",
     "slate": "^0.44.12",
+    "slate-drop-or-paste-images": "^0.9.1",
     "slate-html-serializer": "^0.7.36",
     "slate-react": "^0.21.18",
     "styled-components": "^4.1.3"

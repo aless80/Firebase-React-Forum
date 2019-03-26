@@ -366,7 +366,7 @@ class TextEditor extends React.Component {
               autoFocus
               placeholder=""
               style={{
-                height: "35em"
+                height: this.props.height ? this.props.height : "25em"
               }}
               ref={this.ref}
               value={this.state.value}
@@ -705,9 +705,9 @@ class TextEditor extends React.Component {
         });
       };
       const onError = (msg, error) => {
-        alert(msg)
-        console.error(error)
-      }
+        alert(msg);
+        console.error(error);
+      };
       reader.addEventListener("load", () => {
         if (target) {
           editor.select(target);

@@ -8,6 +8,32 @@ import firebase from "../Firebase";
 export const storage = firebase.storage();
 
 /**
+ * PROBABLY NOT NEEDED
+ * Check if filename is already present in firebase storage
+ *
+ * @param {filename} filename
+ * @callback [onFileFound] - Callback on the file's url triggering when the file is found in the storage
+ * @callback [onFileNotFound] - Callback on the error triggering when the file is not found in the storage
+ *
+export const checkStorage = (filename, onFileFound, onFileNotFound) => {
+  const onFound = url => {
+    if (onFileFound) {
+      onFileFound(url);
+    }
+  };
+  const onNotFound = error => {
+    if (onFileNotFound) {
+      onFileNotFound(error);
+    }
+  };
+  var ref = storage
+    .ref("images")
+    .child(filename)
+    .getDownloadURL()
+    .then(onFound, onNotFound);
+};*/
+
+/**
  * Store file to path in Firebase Storage
  *
  * @param {File} file
@@ -188,6 +214,30 @@ export const fire_posts = firebase.firestore().collection("posts");
  * @type {firebase.firestore.CollectionReference}
  */
 export const fire_comments = firebase.firestore().collection("comments");
+
+/**
+ * Get a DocumentReference to a post. It can be used to populate properties such as id and path before actually saving the post
+ *
+ * @return {DocumentReference} - A reference to a document in firebase firestore
+ */
+export const getPostReference = () => {
+  var fire_post = fire_posts.doc();
+  return fire_post;
+};
+
+/**
+ *
+ * @param {*} fire_post - An existing DocumentReference to a Post
+ * @param {*} data_post - The Post data to be set
+ * @callback [onSetDocument]
+ */
+export const setPostReference = (fire_post, data_post, onSuccessfullySetDocument) => {
+  fire_post.set(data_post).then(() => {
+    if (onSuccessfullySetDocument) {
+      onSuccessfullySetDocument();
+    }
+  });
+};
 
 /**
  * Get a post document and optionally run a callback on it

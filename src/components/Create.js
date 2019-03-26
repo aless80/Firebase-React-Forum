@@ -3,20 +3,27 @@ import { Link } from "react-router-dom";
 import TextEditor from "./TextEditor";
 import { getUserName, getProfilePicUrl } from "../Scripts/firebase";
 import {
-  fire_posts,
   pushComment,
-  getServerTimestamp
+  getServerTimestamp,
+  getPostReference,
+  setPostReference
 } from "../Scripts/firebase";
 
 class Create extends Component {
   state = {
-    title: "Post title"
+    title: "",
+    post_key: ""
   };
-
-  //.doc(this.props.post_key);
+  fire_post = undefined;
   refEditor = React.createRef();
-  initialRichText = "<p></p>"; // this is rich text (I mean a string with HTML code)
+  //initialRichText = "<p></p>"; // this is rich text (I mean a string with HTML code)
+  initialRichText = ""; // this is rich text (I mean a string with HTML code)
 
+  componentDidMount() {
+    //Create a reference to a new unsaved Post
+    this.fire_post = getPostReference();
+    this.setState({ ...this.stat, post_key: this.fire_post.id });
+  }
   // Change title
   onChangeTitle = e => {
     this.setState({ ...this.state, [e.target.name]: e.target.value });
@@ -27,13 +34,13 @@ class Create extends Component {
     var richText = this.refEditor.current.state.valueHtml;
     var plainText = this.refEditor.current.state.plainText;
     const { title } = this.state;
-    if (plainText === "" || richText === "") {
-      alert("Text cannot be empty");
+    if (title === "") {
+      alert("Title cannot be empty");
       e.preventDefault();
       return
     }
-    if (title === "") {
-      alert("Title cannot be empty");
+    if (plainText === "" || richText === "") {
+      alert("Text cannot be empty");
       e.preventDefault();
       return
     }
@@ -42,37 +49,35 @@ class Create extends Component {
     var author = getUserName();
     var profilePicUrl = getProfilePicUrl();
     const timestamp = getServerTimestamp();
-    fire_posts
-      .add({
+    const data_post = {
+      author: author,
+      comments: 1,
+      profilePicUrl: profilePicUrl,
+      title: title,
+      plainText: plainText,
+      lastEdit: timestamp,
+      timestamp: timestamp
+    }
+    
+    
+    const onSuccessfullySetDocument = () => {
+      // Get document with all comments, push new comment
+      var data_comment = {
         author: author,
-        comments: 1,
-        profilePicUrl: profilePicUrl,
-        title: title,
+        profilePicUrl: getProfilePicUrl(),
         plainText: plainText,
+        richText: richText,
         lastEdit: timestamp,
         timestamp: timestamp
-      })
-      .then(docRef => {
-        var post_key = docRef.id;
-        var data = {
-          author: author,
-          profilePicUrl: getProfilePicUrl(),
-          plainText: plainText,
-          richText: richText,
-          lastEdit: timestamp,
-          timestamp: timestamp
-        };
-        // Get document with all comments, push new comment
-        pushComment(post_key, 1, data);
-        this.setState({
-          title: ""
-        });
-        // Go back to root
-        this.props.history.push("/");
-      })
-      .catch(error => {
-        console.error("Error adding Post: ", error);
+      };
+      pushComment(this.state.post_key, 1, data_comment);
+      this.setState({ ...this.state, 
+        title: ""
       });
+      // Go back to root
+      this.props.history.push("/");
+    }
+    setPostReference(this.fire_post, data_post, onSuccessfullySetDocument);
   };
 
   render() {
