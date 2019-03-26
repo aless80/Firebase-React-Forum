@@ -13,13 +13,16 @@ export const storage = firebase.storage();
  * @param {File} file
  * @param {string} storagePath -
  * @param {UploadMetadata} metadata - Metadata for the newly uploaded object
- * @callback [onSuccessfulUpload] - Function to be called when the file is successfully uploaded
+ * @callback [onUploadProgress] - Callback on upload progress triggering when the file is being uploading.
+ * @callback [onSuccessfulUpload] - Callback triggering when the file is successfully uploaded
+ * @callback [onError] - Callback on error message and object triggering when the upload encounters an error
  */
 export const uploadToStorage = (
   file,
+  metadata = {},
   onUploadProgress,
   onSuccessfulUpload,
-  metadata = {}
+  onError
 ) => {
   //TODO: check if it exists! If it does, change name
   var ref = storage.ref("images").child(file.name);
@@ -53,36 +56,36 @@ export const uploadToStorage = (
         default:
           break;
       }
-      return uploadProgress;
     },
     error => {
-      console.error("error:", error);
       // A full list of error codes is available at
       // https://firebase.google.com/docs/storage/web/handle-errors
       let msg = "";
       switch (error.code) {
         case "storage/unauthorized":
           msg =
-            "User does not have permission to access the object:" + error.code;
+            error.code +
+            " error: user does not have permission to access the object. Make sure the size fo the file is less than 1MB";
           break;
         case "storage/canceled":
-          msg = "User canceled the upload:" + error.code;
+          msg = error.code + " error: user canceled the upload";
           break;
         case "storage/unknown":
           msg =
-            "Unknown error occurred, inspect error.serverResponse:" +
-            error.code;
+            error.code +
+            " error: unknown error occurred, inspect error.serverResponse";
           break;
         default:
           msg =
-            "Unknown error occurred, inspect error.serverResponse:" +
-            error.code;
+            error.code +
+            " error: unknown error occurred, inspect error.serverResponse";
           break;
       }
-      console.error(msg);
+      if (onError) {
+        onError(msg, error);
+      }
       //Unsubscribe after error
       uploadTask();
-      return error;
     },
     complete => {
       // Handle successful uploads on complete

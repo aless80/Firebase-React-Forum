@@ -1,5 +1,5 @@
 import InsertImages from "slate-drop-or-paste-images";
-import { Editor, getEventRange, getEventTransfer } from "slate-react";
+import { Editor, getEventRange } from "slate-react";
 import { Block, Value } from "slate";
 import React from "react";
 import { isKeyHotkey } from "is-hotkey";
@@ -12,10 +12,8 @@ import {
   Image
 } from "./StyledComponents";
 import "./TextEditor.css";
-import isUrl from "is-url";
 import Plain from "slate-plain-serializer";
 import Html from "slate-html-serializer";
-import imageExtensions from "image-extensions";
 import { uploadToStorage } from "../Scripts/firebase";
 import { Progress } from "reactstrap";
 
@@ -210,26 +208,6 @@ const plugins = [
 ];
 
 /**
- * A function to determine whether a URL has an image extension.
- *
- * @param {String} url
- * @return {Boolean}
- */
-const isImage = url => {
-  return imageExtensions.includes(getExtension(url));
-};
-
-/**
- * Get the extension of the URL, using the URL API.
- *
- * @param {String} url
- * @return {String}
- */
-const getExtension = url => {
-  return new URL(url).pathname.split(".").pop();
-};
-
-/**
  * A change function to standardize inserting images.
  *
  * @param {Editor} editor
@@ -290,7 +268,7 @@ class TextEditor extends React.Component {
     value: Value.fromJSON(html.deserialize("")),
     plainText: "",
     valueHtml: "",
-    uploadProgress: 0
+    uploadProgress: 100
   };
 
   /**
@@ -394,7 +372,7 @@ class TextEditor extends React.Component {
               value={this.state.value}
               plugins={plugins}
               schema={schema}
-              onDrop={this.onDropOrPaste}
+              //onDrop={this.onDropOrPaste}
               onChange={this.onChange}
               onKeyDown={this.onKeyDown}
               renderMark={this.renderMark}
@@ -464,7 +442,7 @@ class TextEditor extends React.Component {
     event.preventDefault();
     const { editor } = this;
     const target = getEventRange(event, editor);
-    this.handleFiles(editor, target, event.target.files);
+    this.handleFileUpload(editor, target, event.target.files);
   }
 
   /**
@@ -710,52 +688,7 @@ class TextEditor extends React.Component {
     this.editor.command(insertImageUrl, src);
   };
 
-  /**
-   * On drop, insert the image wherever it is dropped.
-   *
-   * @param {Event} event
-   * @param {Editor} editor
-   * @param {Function} next
-   */
-  onDropOrPaste = (event, editor, next) => {
-    const target = getEventRange(event, editor);
-    if (!target && event.type === "drop") return next();
-    const transfer = getEventTransfer(event);
-    const { type, text, files } = transfer;
-    if (type === "files") {
-      this.handleFiles(editor, target, files);
-      /*
-      for (const file of files) {
-        const reader = new FileReader();
-        const [mime] = file.type.split("/");
-        if (mime !== "image") continue;
-        //Callback to insert block in Slate model with src, the image's location in firebase
-        const callback = src => {
-          editor.insertBlock({
-            type: "image",
-            data: { src }
-          });
-        };
-        reader.addEventListener("load", () => {
-          //This saves image in <img> element, which becomes big (too many chars) for firebase
-          //editor.command(this.insertImageUrl, reader.result, target);
-          // Save file to firebase,
-          editor.command(this.insertImage2Firebase, target, file, callback);
-        });
-        reader.readAsDataURL(file);
-      }
-      return;*/
-    }
-    if (type === "text") {
-      if (!isUrl(text)) return next();
-      if (!isImage(text)) return next();
-      editor.command(insertImageUrl, text, target);
-      return;
-    }
-    next();
-  };
-
-  handleFiles = (editor, target, files) => {
+  handleFileUpload = (editor, target, files) => {
     for (const file of files) {
       const reader = new FileReader();
       const [mime] = file.type.split("/");
@@ -771,18 +704,23 @@ class TextEditor extends React.Component {
           data: { src }
         });
       };
+      const onError = (msg, error) => {
+        alert(msg)
+        console.error(error)
+      }
       reader.addEventListener("load", () => {
         if (target) {
           editor.select(target);
         }
         //This saves image in <img> element, which becomes big (too many chars) for firebase
         //editor.command(this.insertImageUrl, reader.result, target);
-        // Save file to firebase,
+        // Save file to cloud storage (e.g. firebase)
         editor.command(
-          this.insertImage2Firebase,
+          this.insertImage2Storage,
           file,
           onUploadProgress,
-          onSuccessfulUpload
+          onSuccessfulUpload,
+          onError
         );
       });
       reader.readAsDataURL(file);
@@ -791,25 +729,33 @@ class TextEditor extends React.Component {
   };
 
   /**
-   * Upload a file to firebase storage
+   * Upload a file to firebase storage.
    *
-   * @param {Editor} editor
-   * @param {String} src
-   * @param {Range} target
-   * @param {String} filename
+   * @param {Editor} editor - Slate's Editor
+   * @param {File} file - The File object to be uploaded
+   * @callback [onUploadProgress] - Callback on upload progress triggering when the file is being uploading.
+   * @callback [onSuccessfulUpload] - Callback triggering when the file is successfully uploaded
+   * @callback [onError] - Callback on error message and object triggering when the upload encounters an error
    */
-  insertImage2Firebase = (
+  insertImage2Storage = (
     editor,
     file,
     onUploadProgress = undefined,
-    onSuccessfulUpload = undefined
+    onSuccessfulUpload = undefined,
+    onError = undefined
   ) => {
     var metadata = {
       contentType: file.type,
       customMetadata: { status: "draft" }
     };
     // Upload to Storage passing callbacks. Note that unregister is called in function on complete or on error
-    uploadToStorage(file, onUploadProgress, onSuccessfulUpload, metadata);
+    uploadToStorage(
+      file,
+      metadata,
+      onUploadProgress,
+      onSuccessfulUpload,
+      onError
+    );
   };
 }
 
