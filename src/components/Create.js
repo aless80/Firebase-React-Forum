@@ -106,6 +106,7 @@ class Create extends Component {
                 <div className="border border-dark">
                   <TextEditor
                     ref={this.refEditor}
+                    post_key={this.state.post_key}
                     initialRichText={this.initialRichText}
                   />
                 </div>

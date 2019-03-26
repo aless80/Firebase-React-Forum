@@ -14,7 +14,8 @@ class Edit extends Component {
   state = {
     title: "",
     plainText: "",
-    richText: ""
+    richText: "",
+    post_key: this.props.match.params.postkey
   };
   refEditor = React.createRef();
   editingPost = this.props.match.params.commentid === "1";
@@ -108,6 +109,7 @@ class Edit extends Component {
                 <div className="border border-dark">
                   <TextEditor
                     ref={this.refEditor}
+                    post_key={this.state.post_key}
                     initialRichText={this.state.richText}
                   />
                 </div>

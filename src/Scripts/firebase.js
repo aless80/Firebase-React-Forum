@@ -8,50 +8,24 @@ import firebase from "../Firebase";
 export const storage = firebase.storage();
 
 /**
- * PROBABLY NOT NEEDED
- * Check if filename is already present in firebase storage
- *
- * @param {filename} filename
- * @callback [onFileFound] - Callback on the file's url triggering when the file is found in the storage
- * @callback [onFileNotFound] - Callback on the error triggering when the file is not found in the storage
- *
-export const checkStorage = (filename, onFileFound, onFileNotFound) => {
-  const onFound = url => {
-    if (onFileFound) {
-      onFileFound(url);
-    }
-  };
-  const onNotFound = error => {
-    if (onFileNotFound) {
-      onFileNotFound(error);
-    }
-  };
-  var ref = storage
-    .ref("images")
-    .child(filename)
-    .getDownloadURL()
-    .then(onFound, onNotFound);
-};*/
-
-/**
  * Store file to path in Firebase Storage
  *
- * @param {File} file
- * @param {string} storagePath -
+ * @param {String} storagePath - Path in Firebase storage where the file gets stored, e.g. the post_key
+ * @param {File} file - The file as a File object
  * @param {UploadMetadata} metadata - Metadata for the newly uploaded object
  * @callback [onUploadProgress] - Callback on upload progress triggering when the file is being uploading.
  * @callback [onSuccessfulUpload] - Callback triggering when the file is successfully uploaded
  * @callback [onError] - Callback on error message and object triggering when the upload encounters an error
  */
 export const uploadToStorage = (
+  storagePath,
   file,
   metadata = {},
   onUploadProgress,
   onSuccessfulUpload,
   onError
 ) => {
-  //TODO: check if it exists! If it does, change name
-  var ref = storage.ref("images").child(file.name);
+  var ref = storage.ref(storagePath).child(file.name);
   // Example for metadata
   /*var metadata = {
     contentType: 'image/jpeg',

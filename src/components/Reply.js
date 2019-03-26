@@ -12,7 +12,11 @@ import {
 
 class Reply extends Component {
   state = {
-    comment_key: ""
+    post: undefined,
+    post_key: "",
+    comment_key: "",
+    richText: "",
+    isLoading: false
   };
   fire_comment = fire_comments.doc(this.props.post_key);
   refEditor = React.createRef();
@@ -21,6 +25,7 @@ class Reply extends Component {
   componentDidMount() {
     getPost(this.props.post_key, doc => {
       this.setState({
+        ...this.state,
         post: doc.data(),
         post_key: doc.id,
         comment_key: doc.data().comments + 1,
@@ -38,7 +43,7 @@ class Reply extends Component {
     if (plainText === "" || richText === "") {
       alert("Text cannot be empty");
       e.preventDefault();
-      return
+      return;
     }
     const timestamp = getServerTimestamp();
     var data = {
@@ -116,6 +121,7 @@ class Reply extends Component {
                 <TextEditor
                   autoFocus
                   ref={this.refEditor}
+                  post_key={this.state.post_key}
                   initialRichText={this.initialRichText}
                   height="10em"
                 />

@@ -265,6 +265,7 @@ class TextEditor extends React.Component {
    * @type {Object}
    */
   state = {
+    post_key: "",
     value: Value.fromJSON(html.deserialize("")),
     plainText: "",
     valueHtml: "",
@@ -279,7 +280,7 @@ class TextEditor extends React.Component {
     const value = Value.fromJSON(html.deserialize(nextProps.initialRichText));
     const plainText = Plain.serialize(value);
     const valueHtml = nextProps.initialRichText;
-    this.setState({ ...this.state, value, plainText, valueHtml });
+    this.setState({ ...this.state, post_key: nextProps.post_key, value, plainText, valueHtml });
   }
 
   /**
@@ -750,6 +751,7 @@ class TextEditor extends React.Component {
     };
     // Upload to Storage passing callbacks. Note that unregister is called in function on complete or on error
     uploadToStorage(
+      this.state.post_key,
       file,
       metadata,
       onUploadProgress,
