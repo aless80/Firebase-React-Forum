@@ -197,6 +197,9 @@ code {
   background-clip: border-box;
   /*color: #000000;*/
   border: 1px solid #000000;
+  overflow: auto;
+  max-width: 1196px;
+  max-height: 806px;
 }
 .comment-page .tborder {
   background: #ffffff;

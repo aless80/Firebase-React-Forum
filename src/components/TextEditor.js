@@ -1,5 +1,6 @@
-import { Editor } from "slate-react";
-import { Value } from "slate";
+import InsertImages from "slate-drop-or-paste-images";
+import { Editor, getEventRange, getEventTransfer } from "slate-react";
+import { Block, Value } from "slate";
 import React from "react";
 import { isKeyHotkey } from "is-hotkey";
 import {
@@ -7,15 +8,21 @@ import {
   EditorContainer,
   Button,
   Icon,
-  Toolbar
+  Toolbar,
+  Image
 } from "./StyledComponents";
-import './TextEditor.css';
+import "./TextEditor.css";
+import isUrl from "is-url";
 import Plain from "slate-plain-serializer";
 import Html from "slate-html-serializer";
+import imageExtensions from "image-extensions";
+import { uploadToStorage } from "../Scripts/firebase";
+
 //https://github.com/wesharehoodies/slate-react-rich-text-editor/tree/part-1
 //github slate https://github.com/ianstormtaylor/slate
 //docs slate https://docs.slatejs.org/
 //example links https://github.com/ianstormtaylor/slate/tree/master/examples/links
+//file: https://github.com/ianstormtaylor/slate/blob/master/examples/images/index.js
 
 /**
  * Deserialize == convert DOM to Slate model
@@ -35,7 +42,8 @@ const rules = [
         ol: "numbered-list",
         ul: "bulleted-list",
         li: "list-item",
-        a: "link"
+        a: "link",
+        img: "image"
       };
       const type = BLOCK_TAGS[el.tagName.toLowerCase()];
       //console.log('deserialize block. type:', type, el.tagName.toLowerCase())
@@ -48,6 +56,12 @@ const rules = [
             nodes: next(el.childNodes)
           };
           return obj;
+        } else if (type === "image") {
+          return {
+            object: "block",
+            type: type,
+            data: { src: el.getAttribute("src") }
+          };
         } else {
           return {
             object: "block",
@@ -62,7 +76,6 @@ const rules = [
       //console.log("serialize block/inline. obj.object:", obj.object, obj.toJSON());
       if (obj.object === "inline") {
         if (obj.type === "link") {
-          //console.log("  serialize inline obj.toJSON():", obj.toJSON());
           //this is what gets stored in firebase
           return <a href={obj.toJSON().data.href}>{children}</a>;
         }
@@ -90,6 +103,20 @@ const rules = [
             return <ul>{children}</ul>;
           case "list-item":
             return <li>{children}</li>;
+          case "image":
+            return (
+              <img
+                src={obj.toJSON().data.src}
+                alt=""
+                style={{
+                  flex: 1,
+                  maxWidth: "800px",
+                  maxHeight: "800px",
+                  width: "auto",
+                  height: "auto"
+                }}
+              />
+            );
           default:
             console.error(
               "serialize block on default case. obj.type=",
@@ -147,23 +174,102 @@ const html = new Html({ rules });
  * @param {Editor} editor
  * @param {String} href
  */
-function wrapLink(editor, href) {
+const wrapLink = (editor, href) => {
   editor.wrapInline({
     type: "link",
     data: { href }
   });
 
   editor.moveToEnd();
-}
+};
 
 /**
  * A change helper to standardize unwrapping links.
  *
  * @param {Editor} editor
  */
-function unwrapLink(editor) {
+const unwrapLink = editor => {
   editor.unwrapInline("link");
-}
+};
+
+/**
+ *  Add the plugin to your set of plugins.
+ */
+const plugins = [
+  InsertImages({
+    extensions: ["png", "jpg"],
+    insertImage: (change, file) => {
+      return change.insertBlock({
+        type: "image",
+        isVoid: true,
+        data: { file }
+      });
+    }
+  })
+];
+
+/**
+ * A function to determine whether a URL has an image extension.
+ *
+ * @param {String} url
+ * @return {Boolean}
+ */
+const isImage = url => {
+  return imageExtensions.includes(getExtension(url));
+};
+
+/**
+ * Get the extension of the URL, using the URL API.
+ *
+ * @param {String} url
+ * @return {String}
+ */
+const getExtension = url => {
+  return new URL(url).pathname.split(".").pop();
+};
+
+/**
+ * A change function to standardize inserting images.
+ *
+ * @param {Editor} editor
+ * @param {String} src
+ * @param {Range} target
+ */
+const insertImageUrl = (editor, src, target) => {
+  if (target) {
+    editor.select(target);
+  }
+  editor.insertBlock({
+    type: "image",
+    data: { src: src }
+  });
+};
+
+/**
+ * The editor's schema.
+ *
+ * @type {Object}
+ */
+const schema = {
+  document: {
+    last: { type: "paragraph" },
+    normalize: (editor, { code, node, child }) => {
+      switch (code) {
+        case "last_child_type_invalid": {
+          const paragraph = Block.create("paragraph");
+          return editor.insertNodeByKey(node.key, node.nodes.size, paragraph);
+        }
+        default:
+          console.error("Default case in TextEditor > schema");
+      }
+    }
+  },
+  blocks: {
+    image: {
+      isVoid: true
+    }
+  }
+};
 
 class TextEditor extends React.Component {
   /**
@@ -190,12 +296,9 @@ class TextEditor extends React.Component {
    * @param {*} nextProps
    */
   componentWillReceiveProps(nextProps) {
-    //console.log('\ncomponentWillReceiveProps')
     const value = Value.fromJSON(html.deserialize(nextProps.initialRichText));
     const plainText = Plain.serialize(value);
-    //console.log('  plainText:', plainText)
     const valueHtml = nextProps.initialRichText;
-    //console.log('  valueHtml:', valueHtml)
     this.setState({ value, plainText, valueHtml });
   }
 
@@ -209,15 +312,17 @@ class TextEditor extends React.Component {
     return value.inlines.some(inline => inline.type === "link");
   };
 
+  _handleIconClick = () => {
+    var inputField = this.refs.fileField;
+    inputField.click();
+  };
+  
   /**
    * Render the app.
    *
    * @return {Element} element
    */
   render() {
-    const textareaHeight = {
-      height: "8em"
-    };
     return (
       <div className="textEditor">
         <EditorContainer>
@@ -237,15 +342,43 @@ class TextEditor extends React.Component {
             >
               <Icon title="insert_link">insert_link</Icon>
             </Button>
+            <Button onMouseDown={this.onClickImageUrl}>
+              <Icon title="Insert image url">image</Icon>
+            </Button>
+
+            <div className="element">
+              <Icon
+                title="Insert image url"
+                onClick={this._handleIconClick}
+                style={{ cursor: "pointer" }}
+              >
+                cloud_upload
+              </Icon>
+              <input
+                ref="fileField"
+                type="file"
+                id="upload"
+                name="upload"
+                accept="image/png, image/jpeg"
+                multiple=""
+                style={{ display: "none", width: "auto", height: "auto" }}
+                onChange={event => this.onChangeInput(event)}
+              />
+            </div>
           </Toolbar>
           <TextArea>
             <Editor
               spellCheck
               autoFocus
               placeholder=""
-              style={textareaHeight}
+              style={{
+                height: "35em"
+              }}
               ref={this.ref}
               value={this.state.value}
+              plugins={plugins}
+              schema={schema}
+              onDrop={this.onDropOrPaste}
               onChange={this.onChange}
               onKeyDown={this.onKeyDown}
               renderMark={this.renderMark}
@@ -307,6 +440,18 @@ class TextEditor extends React.Component {
   };
 
   /**
+   * Callback firing after a user has selected a file using the input element
+   *
+   * @param {Object} event
+   */
+  onChangeInput(event) {
+    event.preventDefault();
+    const { editor } = this;
+    const target = getEventRange(event, editor);
+    this.handleFiles(editor, target, event.target.files);
+  }
+
+  /**
    * Render a Slate mark.
    *
    * @param {Object} props
@@ -354,6 +499,7 @@ class TextEditor extends React.Component {
       case "list-item":
         return <li {...attributes}>{children}</li>;
       case "link":
+        const { isFocused } = props;
         const { data } = node;
         const href = data.get("href");
         return (
@@ -361,6 +507,10 @@ class TextEditor extends React.Component {
             {children}
           </a>
         );
+      case "image": {
+        const src = node.data.get("src");
+        return <Image src={src} selected={isFocused} {...attributes} />;
+      }
       default:
         return next();
     }
@@ -530,6 +680,105 @@ class TextEditor extends React.Component {
         editor.setBlocks("list-item").wrapBlock(type);
       }
     }
+  };
+
+  /**
+   * On clicking the "insert image url" button, prompt for an image and insert it
+   *
+   * @param {Event} event
+   */
+  onClickImageUrl = event => {
+    event.preventDefault();
+    const src = window.prompt("Enter the URL of the image:");
+    if (!src) return;
+    this.editor.command(insertImageUrl, src);
+  };
+
+  /**
+   * On drop, insert the image wherever it is dropped.
+   *
+   * @param {Event} event
+   * @param {Editor} editor
+   * @param {Function} next
+   */
+  onDropOrPaste = (event, editor, next) => {
+    const target = getEventRange(event, editor);
+    if (!target && event.type === "drop") return next();
+    const transfer = getEventTransfer(event);
+    const { type, text, files } = transfer;
+    if (type === "files") {
+      this.handleFiles(editor, target, files);
+      /*
+      for (const file of files) {
+        const reader = new FileReader();
+        const [mime] = file.type.split("/");
+        if (mime !== "image") continue;
+        //Callback to insert block in Slate model with src, the image's location in firebase
+        const callback = src => {
+          editor.insertBlock({
+            type: "image",
+            data: { src }
+          });
+        };
+        reader.addEventListener("load", () => {
+          //This saves image in <img> element, which becomes big (too many chars) for firebase
+          //editor.command(this.insertImageUrl, reader.result, target);
+          // Save file to firebase,
+          editor.command(this.insertImage2Firebase, target, file, callback);
+        });
+        reader.readAsDataURL(file);
+      }
+      return;*/
+    }
+    if (type === "text") {
+      if (!isUrl(text)) return next();
+      if (!isImage(text)) return next();
+      editor.command(insertImageUrl, text, target);
+      return;
+    }
+    next();
+  };
+
+  handleFiles = (editor, target, files) => {
+    for (const file of files) {
+      const reader = new FileReader();
+      const [mime] = file.type.split("/");
+      if (mime !== "image") continue;
+      //Callback to insert block in Slate model with src, the image's location in firebase
+      const callback = src => {
+        editor.insertBlock({
+          type: "image",
+          data: { src }
+        });
+      };
+      reader.addEventListener("load", () => {
+        if (target) {
+          editor.select(target);
+        }
+        //This saves image in <img> element, which becomes big (too many chars) for firebase
+        //editor.command(this.insertImageUrl, reader.result, target);
+        // Save file to firebase,
+        editor.command(this.insertImage2Firebase, file, callback);
+      });
+      reader.readAsDataURL(file);
+    }
+    return;
+  };
+
+  /**
+   * Upload a file to firebase storage
+   *
+   * @param {Editor} editor
+   * @param {String} src
+   * @param {Range} target
+   * @param {String} filename
+   */
+  insertImage2Firebase = (editor, file, callback) => {
+    var metadata = {
+      contentType: file.type,
+      customMetadata: { status: "draft" }
+    };
+    uploadToStorage(file, callback, metadata);
   };
 }
 

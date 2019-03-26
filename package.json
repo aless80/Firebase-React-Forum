@@ -4,14 +4,18 @@
   "private": true,
   "dependencies": {
     "firebase": "^5.8.4",
+    "image-extensions": "^1.1.0",
     "immutable": "^4.0.0-rc.12",
+    "is-url": "^1.2.4",
     "material-icons-react": "^1.0.4",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
+    "react-firebase-file-uploader": "^2.4.2",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.5",
     "reactstrap": "^7.1.0",
     "slate": "^0.44.12",
+    "slate-drop-or-paste-images": "^0.9.1",
     "slate-html-serializer": "^0.7.36",
     "slate-react": "^0.21.18",
     "styled-components": "^4.1.3"

@@ -46,9 +46,8 @@ export const Menu = styled.div`
 
 export const Toolbar = styled(Menu)`
   position: relative;
-  padding: 1px 18px 17px;
+  padding: 1px 18px 5px;
   border-bottom: 2px solid #eee;
-  margin-bottom: 20px;
 `;
 
 /*export const StyledBlockquote = styled(Menu)`
@@ -71,3 +70,10 @@ export const Toolbar = styled(Menu)`
   padding: 0.5em 10px;
 `;
 */
+
+export const Image = styled('img')`
+  display: block;
+  max-width: 100%;
+  max-height: 20em;
+  box-shadow: ${props => (props.selected ? '0 0 0 2px blue;' : 'none')};
+`

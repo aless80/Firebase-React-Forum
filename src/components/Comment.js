@@ -74,7 +74,7 @@ class Comment extends Component {
                       className={"alt" + ((this.props.comment.id % 2) + 1)}
                       width="175"
                     >
-                      <div id={"postmenu_" + this.props.comment.id}>
+                      <div id={"postmenu-" + this.props.comment.id}>
                         <div className="font-weight-strong">
                           {this.props.comment.author ? (<strong>{this.props.comment.author}</strong>) : 
                           (<strong>&nbsp;</strong>)}
@@ -133,10 +133,11 @@ class Comment extends Component {
                         ((this.props.comment.id % 2) + 1) +
                         " border relative"
                       }
-                      id={"td_post_" + this.props.comment.id}
+                      id={"td-post-" + this.props.comment.id}
                     >
                       <div
-                        id={"post_message_" + this.props.comment.id}
+                      className="post-message"
+                        id={"post-message-" + this.props.comment.id}
                         dangerouslySetInnerHTML={{
                           __html: this.props.comment.richText
                         }}

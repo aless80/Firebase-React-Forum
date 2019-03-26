@@ -19,7 +19,6 @@ class Post extends Component {
     isLoading: true,
     title: ""
   };
-  //comment_array = [];
   unsubscribe = null;
 
   componentDidMount() {
