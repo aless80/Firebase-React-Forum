@@ -14,12 +14,27 @@ class PostList extends Component {
   unsubscribe = null;
   state = {
     posts: [],
+    sortBy: "",
+    direction: "",
     isLoading: true
   };
 
   componentDidMount() {
+    // Trigger componentDidUpdate
+    this.setState({ ...this.state, sortBy: "timestamp", direction: "desc" });
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
     //Get the posts now and subscribe to updates
-    this.unsubscribe = fire_posts.orderBy("timestamp").onSnapshot(this.onPostsCollectionUpdate);
+    if (
+      this.state.sortBy !== prevState.sortBy ||
+      this.state.direction !== prevState.direction
+    ) {
+      this.unsubscribe = fire_posts
+        .orderBy(this.state.sortBy, this.state.direction)
+        .limit(300)
+        .onSnapshot(this.onPostsCollectionUpdate);
+    }
   }
 
   onPostsCollectionUpdate = querySnapshot => {
@@ -27,14 +42,31 @@ class PostList extends Component {
     querySnapshot.forEach(doc => {
       posts.push({ ...doc.data(), key: doc.id });
     });
-    this.setState({
-      posts,
-      isLoading: false
-    });
+    this.setState({ ...this.state, posts, isLoading: false });
   };
 
   componentWillUnmount() {
     this.unsubscribe();
+  }
+
+  onDoubleClickHeader(event) {
+    event.stopPropagation();
+    // Block event on <span>
+    if (event.target.tagName !== "TH") return;
+    // Set sortBy and direction in state based on previous state and what was clicked
+    let targetname = event.target.attributes.name.nodeValue;
+    let direction = "desc";
+    if (this.state.sortBy === targetname) {
+      direction = this.state.direction === "desc" ? "asc" : "desc";
+    }
+    this.setState({ ...this.state, sortBy: targetname, direction });
+  }
+
+  renderSorting(targetname) {
+    if (this.state.sortBy !== targetname) {
+      return "";
+    }
+    return this.state.direction === "desc" ? "\u00A0\u25B4" : "\u00A0\u25BE";
   }
 
   render() {
@@ -55,11 +87,45 @@ class PostList extends Component {
                   <thead>
                     <tr>
                       <th>Picture</th>
-                      <th>Title</th>
-                      <th>Text</th>
-                      <th>Comments</th>
-                      <th>Author</th>
-                      <th>Created</th>
+                      <th
+                        name="title"
+                        onDoubleClick={event => this.onDoubleClickHeader(event)}
+                      >
+                        Title
+                        <span>{decodeURI(this.renderSorting("title"))}</span>
+                      </th>
+                      <th
+                        name="plainText"
+                        onDoubleClick={event => this.onDoubleClickHeader(event)}
+                      >
+                        Text
+                        <span>
+                          {decodeURI(this.renderSorting("plainText"))}
+                        </span>
+                      </th>
+                      <th
+                        name="comments"
+                        onDoubleClick={event => this.onDoubleClickHeader(event)}
+                      >
+                        Comments
+                        <span>{decodeURI(this.renderSorting("comments"))}</span>
+                      </th>
+                      <th
+                        name="author"
+                        onDoubleClick={event => this.onDoubleClickHeader(event)}
+                      >
+                        Author
+                        <span>{decodeURI(this.renderSorting("author"))}</span>
+                      </th>
+                      <th
+                        name="timestamp"
+                        onDoubleClick={event => this.onDoubleClickHeader(event)}
+                      >
+                        Created
+                        <span>
+                          {decodeURI(this.renderSorting("timestamp"))}
+                        </span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>

@@ -61,10 +61,11 @@ members: {
 ```
 
 ## Todo
-* dynamically query posts by eg date, user, etc
+* mv all setState in componentDidMount to constructor?
 * focus on texteditor in Reply component
 * JSDoc http://usejsdoc.org/about-getting-started.htm
 * firebase storage and upload images from TextEditor
+* paging
 * propTypes - skip?
 * add close and status to posts?
 * add categories to posts?
