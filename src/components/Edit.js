@@ -66,15 +66,15 @@ class Edit extends Component {
       const { title } = this.state;
       const plainText = this.refEditor.current.state.plainText;
       const data_post = {
-        title: title,
         plainText: plainText,
+        title: title,
         lastEdit: getServerTimestamp()
       };
       updatePost(this.props.match.params.postkey, data_post);
     }
     // Go back to post
     this.setState({
-      title: "aa",
+      title: "",
       plainText: "",
       richText: ""
     });

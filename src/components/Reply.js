@@ -70,7 +70,6 @@ class Reply extends Component {
     fire_comments.doc(this.props.post_key)
       .set(comment_obj)
       .then(docRef => {
-        //this.props.history.push("/");
         console.log("success");
       })
       .catch(error => {
@@ -103,7 +102,7 @@ class Reply extends Component {
       () => {
         // Close Reply menu
         this.props.toggleShowReply();
-        // Can I refresh <Comment> children in Show? Well, reload the page
+        // Can avoid this refresh with observables but easier to reload the page
         window.location.reload();
       }
     );

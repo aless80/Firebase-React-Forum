@@ -363,6 +363,7 @@ export const invalidatePost = (post_key, onAfterupdate) => {
     comments: 1,
     profilePicUrl: "",
     plainText: "Post deleted",
+    status: "closed",
     lastEdit: firebase.firestore.FieldValue.serverTimestamp()
     //title: ""
     //timestamp: timestamp

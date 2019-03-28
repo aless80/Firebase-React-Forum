@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import Reply from "./Reply";
 import Comment from "./Comment";
 import {
+  fire_posts,
   invalidateComment,
   invalidatePost,
   getPost,
   getComment,
-  fire_posts
+  updatePost
 } from "../Scripts/firebase";
 
 class Post extends Component {
@@ -24,7 +25,7 @@ class Post extends Component {
   componentDidMount() {
     getComment(this.props.match.params.id, doc => {
       const comment_array = this.doc2array(doc.data());
-      this.setState({...this.state, comment_array: comment_array})
+      this.setState({ ...this.state, comment_array: comment_array });
     });
     getPost(this.props.match.params.id, doc => {
       // Set the state
@@ -35,23 +36,25 @@ class Post extends Component {
       };
       this.setState({ ...this.state, ...data });
       // Subscribe to updates of the post
-      this.unsubscribe = fire_posts.doc(this.props.match.params.id).onSnapshot(this.onPostDocumentUpdate);
+      this.unsubscribe = fire_posts
+        .doc(this.props.match.params.id)
+        .onSnapshot(this.onPostDocumentUpdate);
     });
   }
 
-  // Keep comments' text and title up to date. 
+  // Keep comments' text and title up to date.
   // This is achieved by having 1) the onSnapshot subscription above; 2) comment_array and title in state; 3) this callback modifying comment_array and title
   onPostDocumentUpdate = () => {
     // Update comments
     getComment(this.props.match.params.id, doc => {
       const comment_array = this.doc2array(doc.data());
-      this.setState({...this.state, comment_array: comment_array })
+      this.setState({ ...this.state, comment_array: comment_array });
     });
     // Update post title
     getPost(this.props.match.params.id, doc => {
-      const post = doc.data()
-      this.setState({ ...this.state.post, post: post })
-    })
+      const post = doc.data();
+      this.setState({ ...this.state.post, post: post });
+    });
   };
 
   componentWillUnmount() {
@@ -72,12 +75,30 @@ class Post extends Component {
     }
   }*/
 
+  toggleCloseCallback = post_key => {
+    let oldStatus = this.state.post.status;
+    let msg =
+      oldStatus === "open"
+        ? "Do you want to close this post to new answers?"
+        : "Do you want to open this post again for new answers?";
+    let res = window.confirm(msg);
+    if (!res) {
+      return;
+    }
+    const newStatus = oldStatus === "open" ? "closed" : "open";
+    updatePost(post_key, { status: newStatus });
+  };
+
   deleteCallback = (post_key, commentid) => {
+    const res = window.confirm("Do you really want to delete the content of this comment?");
+    if (!res) {
+      return;
+    }
     invalidateComment(post_key, commentid);
     if (commentid === "1") {
+      // Notice that invalidatePost also closes the post
       invalidatePost(post_key);
-    }
-    this.props.history.push(`/`);
+    };
   };
 
   doc2array(comment_array) {
@@ -92,10 +113,10 @@ class Post extends Component {
   }
 
   reply(id) {
-    this.toggleShowReply();
+    this.toggleShowReplyComment();
   }
 
-  toggleShowReply() {
+  toggleShowReplyComment() {
     this.setState({ ...this.state, showReply: !this.state.showReply });
   }
 
@@ -123,11 +144,13 @@ class Post extends Component {
                   comment={comment}
                   post_title={this.state.post.title}
                   post_key={this.state.post_key}
+                  post_status={this.state.post.status}
                   deleteCallback={this.deleteCallback}
+                  toggleCloseCallback={this.toggleCloseCallback}
                 />
               ))}
               <div>
-                {!this.state.showReply && (
+                {!this.state.showReply && this.state.post.status === "open" && (
                   <button
                     onClick={() => this.reply(this.state.key)}
                     className="btn btn-bgn ml-0"
@@ -145,7 +168,7 @@ class Post extends Component {
           {this.state.showReply && (
             <Reply
               post_key={this.props.match.params.id}
-              toggleShowReply={() => this.toggleShowReply()}
+              toggleShowReply={() => this.toggleShowReplyComment()}
             />
           )}
         </div>

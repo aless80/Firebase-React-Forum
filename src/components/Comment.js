@@ -4,17 +4,17 @@ import {
   getDateTime,
   timeDifference
 } from "../Scripts/utilities";
-import { Link } from "react-router-dom";
-import { getUserName, profilePicStyle } from "../Scripts/firebase";
+import CommentMenu from "./commentMenu";
+import { profilePicStyle } from "../Scripts/firebase";
 
 class Comment extends Component {
-  delete() {
-    const res = window.confirm("Do you really want to remove this comment?");
-    if (!res) {
-      return;
-    }
+  toggleCloseCallback = () => {
+    this.props.toggleCloseCallback(this.props.post_key);
+  };
+
+  deleteCallback = () => {
     this.props.deleteCallback(this.props.post_key, this.props.comment.id);
-  }
+  };
 
   render() {
     const imageStyle = {
@@ -51,6 +51,7 @@ class Comment extends Component {
                       <span className="text-left">
                         {this.props.comment.id > 0 && "Re:"}{" "}
                         {this.props.post_title}{" "}
+                        {this.props.post_status === "closed" && "[POST CLOSED]"}
                       </span>
                       {this.props.comment.id > 0 && (
                         <span className="float-right">
@@ -68,6 +69,7 @@ class Comment extends Component {
                     </th>
                   </tr>
                 </thead>
+
                 <tbody>
                   <tr className="align-top">
                     <td
@@ -148,6 +150,7 @@ class Comment extends Component {
                       />
                     </td>
                   </tr>
+                  
                   <tr>
                     <td
                       className={"alt" + ((this.props.comment.id % 2) + 1)}
@@ -161,28 +164,14 @@ class Comment extends Component {
                       }
                       id={"td-menu-" + this.props.comment.id}
                     >
-                      {this.props.comment.author === getUserName() && (
-                        <div className="postmenu small text-muted bottom-right">
-                          <Link
-                            to={
-                              "/edit/" +
-                              this.props.post_key +
-                              "/" +
-                              this.props.comment.id
-                            }
-                          >
-                            edit
-                          </Link>
-                          <span>&nbsp;</span>
-                          <button
-                            type="button"
-                            className="link-button"
-                            onClick={() => this.delete()}
-                          >
-                            delete
-                          </button>
-                        </div>
-                      )}
+                      <CommentMenu
+                        comment_id={this.props.comment.id}
+                        author={this.props.comment.author}
+                        post_key={this.props.post_key}
+                        post_status={this.props.post_status}
+                        deleteCallback={this.deleteCallback}
+                        toggleCloseCallback={this.toggleCloseCallback}
+                      />
                     </td>
                   </tr>
                 </tbody>

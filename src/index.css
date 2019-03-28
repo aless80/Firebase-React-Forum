@@ -225,7 +225,7 @@ div.thead {
   vertical-align: bottom;
 }
 .commentpage .postmenu > a {
-  padding: 0 3px 2px;
+  /*padding: 0 3px 2px;*/
   color: #848d95;
   vertical-align: bottom;
 }

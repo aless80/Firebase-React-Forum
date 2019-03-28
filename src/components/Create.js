@@ -14,14 +14,12 @@ class Create extends Component {
     title: "",
     post_key: ""
   };
-  fire_post = undefined;
+  fire_post = getPostReference();
   refEditor = React.createRef();
-  //initialRichText = "<p></p>"; // this is rich text (I mean a string with HTML code)
   initialRichText = ""; // this is rich text (I mean a string with HTML code)
 
   componentDidMount() {
     //Create a reference to a new unsaved Post
-    this.fire_post = getPostReference();
     this.setState({ ...this.stat, post_key: this.fire_post.id });
   }
   // Change title
@@ -52,14 +50,13 @@ class Create extends Component {
     const data_post = {
       author: author,
       comments: 1,
-      profilePicUrl: profilePicUrl,
-      title: title,
       plainText: plainText,
+      profilePicUrl: profilePicUrl,
+      status: 'open',
+      title: title,
       lastEdit: timestamp,
       timestamp: timestamp
     }
-    
-    
     const onSuccessfullySetDocument = () => {
       // Get document with all comments, push new comment
       var data_comment = {
@@ -71,11 +68,8 @@ class Create extends Component {
         timestamp: timestamp
       };
       pushComment(this.state.post_key, 1, data_comment);
-      this.setState({ ...this.state, 
-        title: ""
-      });
       // Go back to root
-      this.props.history.push("/");
+      this.props.history.push("/post/" + this.state.post_key);
     }
     setPostReference(this.fire_post, data_post, onSuccessfullySetDocument);
   };

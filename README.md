@@ -61,7 +61,6 @@ members: {
 ```
 
 ## Todo
-* mv all setState in componentDidMount to constructor?
 * focus on texteditor in Reply component
 * JSDoc http://usejsdoc.org/about-getting-started.htm
 * firebase storage and upload images from TextEditor
