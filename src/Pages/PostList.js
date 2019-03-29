@@ -248,7 +248,6 @@ class PostList extends Component {
               </div>
             )}
             <div>
-              <br />
               <Link to="/create" className="btn btn-bgn">
                 New Post
               </Link>

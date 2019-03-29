@@ -1,8 +1,11 @@
 
-**WORK IN PROGRESS**
-
 ## Description
-This is a forum website based on Firebase and React. I will add more details later on
+This is a forum website based on (Firebase)[https://firebase.google.com/] and React. 
+
+![Alt Text](https://github.com/aless80/Firebase-React-Forum/blob/master/img/PostList.png =300x)
+
+
+![Alt Text](https://github.com/aless80/Firebase-React-Forum/blob/master/img/Post.png =300x)
 
 ## Set up
 Create an account in Firebase with a database. Set up a Database. Find the configuration and place it in a src/Firebase.js file that you create from template:
@@ -17,6 +20,7 @@ post: {
     lastEdit: March 7, 2019 at 10:41:46 AM UTC+1,
     profilePicUrl: "https://lh3.googleusercontent.com/-71tkp-VXGdM/AAAAAAAAAAI/AAAAAAAAUAA/w5B0IQGGPUQ/photo.jpg",
     plainText: "This is the text in the post",
+    status: "open",
     timestamp: March 7, 2019 at 10:41:46 AM UTC+1,
     title: "Title of my post"
   },
@@ -29,16 +33,18 @@ comments: {
   "AA4aQdp_post_key": {
     "MM18sh1_msg_key": {
       author: "John Doe",
+      lastEdit: March 8, 2019 at 12:00:00 AM UTC+1,
+      plainText: "This is the first comment in the post",
       profilePicUrl: "https://lh3.googleusercontent.com/-62rjo-VXGdM/BBBBBBBBBBI/BBBBBBBBBUBB/w6C1UYEGOUY/photo.jpg",
-      text: "This is the first comment in the post",
+      richText: "<p>This is the first comment in the post</p>",
       timestamp: March 8, 2019 at 12:00:00 AM UTC+1,
     },
     "NN29yt2_msg_key": {
       author: "Alessandro Marin",
       lastEdit: March 8, 2019 at 12:00:00 AM UTC+1,
-      plainText
+      plainText: "This is the 2nd comment in the post",
       profilePicUrl: "https://lh3.googleusercontent.com/-71tkp-VXGdM/AAAAAAAAAAI/AAAAAAAAUAA/w5B0IQGGPUQ/photo.jpg",
-      text: "This is the 2nd comment in the post",
+      richText: "<p>This is <strong>the 2nd</strong> comment in the post</p>,      
       timestamp: March 8, 2019 at 12:00:00 AM UTC+1,
     }
   },
