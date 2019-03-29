@@ -14,7 +14,7 @@ import {
 import "./TextEditor.css";
 import Plain from "slate-plain-serializer";
 import Html from "slate-html-serializer";
-import { uploadToStorage } from "../Scripts/firebase";
+import { uploadToStorage } from "../../Scripts/firebase";
 import { Progress } from "reactstrap";
 
 //https://github.com/wesharehoodies/slate-react-rich-text-editor/tree/part-1

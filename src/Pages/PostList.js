@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import Pagination from "./Pagination";
+import Pagination from "../Components/Pagination";
 import {
   truncate,
   getDateObject,

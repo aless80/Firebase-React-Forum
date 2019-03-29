@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import TextEditor from "./TextEditor";
+import TextEditor from "./TextEditor/TextEditor";
 import {
   fire_comments,
   getUserName,

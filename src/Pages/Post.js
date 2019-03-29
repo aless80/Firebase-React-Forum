@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import Reply from "./Reply";
-import Comment from "./Comment";
+import Reply from "../Components/Reply";
+import Comment from "../Components/Comment";
 import {
   fire_posts,
   invalidateComment,

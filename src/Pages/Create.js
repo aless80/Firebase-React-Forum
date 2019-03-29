@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import TextEditor from "./TextEditor";
+import TextEditor from "../Components/TextEditor/TextEditor";
 import { getUserName, getProfilePicUrl } from "../Scripts/firebase";
 import {
   pushComment,

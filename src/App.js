@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
-import PostList from "./components/PostList";
-import Login from "./components/Login";
-import Edit from "./components/Edit";
-import Create from "./components/Create";
-import Post from "./components/Post";
-import Navbar from "./components/Navbar";
+import PostList from "./Pages/PostList";
+import Login from "./Pages/Login";
+import Edit from "./Components/Edit";
+import Create from "./Pages/Create";
+import Post from "./Pages/Post";
+import Navbar from "./Components/Navbar";
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 
