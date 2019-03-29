@@ -35,12 +35,12 @@ class Create extends Component {
     if (title === "") {
       alert("Title cannot be empty");
       e.preventDefault();
-      return
+      return;
     }
     if (plainText === "" || richText === "") {
       alert("Text cannot be empty");
       e.preventDefault();
-      return
+      return;
     }
     // Send to Firebase
     e.preventDefault();
@@ -52,11 +52,11 @@ class Create extends Component {
       comments: 1,
       plainText: plainText,
       profilePicUrl: profilePicUrl,
-      status: 'open',
+      status: "open",
       title: title,
       lastEdit: timestamp,
       timestamp: timestamp
-    }
+    };
     const onSuccessfullySetDocument = () => {
       // Get document with all comments, push new comment
       var data_comment = {
@@ -67,16 +67,16 @@ class Create extends Component {
         lastEdit: timestamp,
         timestamp: timestamp
       };
-      pushComment(this.state.post_key, 1, data_comment);
-      // Go back to root
-      this.props.history.push("/post/" + this.state.post_key);
-    }
+      pushComment(this.state.post_key, 1, data_comment, () => {
+        // Go back to post
+        this.props.history.push("/post/" + this.state.post_key);
+      });
+    };
     setPostReference(this.fire_post, data_post, onSuccessfullySetDocument);
   };
 
   render() {
-    //const { title, plainText, richText } = this.state;
-    const { title } = this.state;
+    const { title, post_key } = this.state;
     return (
       <div className="container">
         <div className="panel panel-default">
@@ -100,7 +100,7 @@ class Create extends Component {
                 <div className="border border-dark">
                   <TextEditor
                     ref={this.refEditor}
-                    post_key={this.state.post_key}
+                    post_key={post_key}
                     initialRichText={this.initialRichText}
                   />
                 </div>

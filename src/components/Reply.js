@@ -109,7 +109,7 @@ class Reply extends Component {
   };
 
   render() {
-    //const { richText } = this.state;
+    let { post_key } = this.state;
     return (
       <div className="panel panel-default">
         <div className="panel-heading" />
@@ -120,7 +120,7 @@ class Reply extends Component {
                 <TextEditor
                   autoFocus
                   ref={this.refEditor}
-                  post_key={this.state.post_key}
+                  post_key={post_key}
                   initialRichText={this.initialRichText}
                   height="10em"
                 />

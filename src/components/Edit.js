@@ -82,6 +82,7 @@ class Edit extends Component {
   };
 
   render() {
+    const { title, post_key, richText } = this.state;
     return (
       <div className="container">
         <div className="panel panel-default">
@@ -99,7 +100,7 @@ class Edit extends Component {
                     type="text"
                     className="form-control"
                     name="title"
-                    value={this.state.title}
+                    value={title}
                     onChange={this.onChangeTitle}
                     placeholder="Title"
                   />
@@ -109,8 +110,8 @@ class Edit extends Component {
                 <div className="border border-dark">
                   <TextEditor
                     ref={this.refEditor}
-                    post_key={this.state.post_key}
-                    initialRichText={this.state.richText}
+                    post_key={post_key}
+                    initialRichText={richText}
                   />
                 </div>
               </div>

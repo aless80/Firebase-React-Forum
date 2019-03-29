@@ -4,7 +4,7 @@ import {
   getDateTime,
   timeDifference
 } from "../Scripts/utilities";
-import CommentMenu from "./commentMenu";
+import CommentMenu from "./CommentMenu";
 import { profilePicStyle } from "../Scripts/firebase";
 
 class Comment extends Component {
@@ -28,13 +28,17 @@ class Comment extends Component {
       padding: "0.0rem",
       fontSize: "32px"
     };
+    let comment = this.props.comment;
+    let post_title = this.props.post_title;
+    let post_status = this.props.post_status;
+    let post_key = this.props.post_key;
     return (
       <div align="center">
         <div className="commentpage text-left w-100">
           <div className="p-0" align="left">
-            <div id={"edit" + this.props.comment.id} className="p-0">
+            <div id={"edit" + comment.id} className="p-0">
               <table
-                id={"post" + this.props.comment.id}
+                id={"post" + comment.id}
                 className="tborder w-100 align-middle"
                 cellSpacing="0"
                 cellPadding="3"
@@ -44,25 +48,25 @@ class Comment extends Component {
                     <th
                       className="thead font-weight-light border border-right-0"
                       title={getDateTime(
-                        getDateObject(this.props.comment.timestamp)
+                        getDateObject(comment.timestamp)
                       )}
                     />
                     <th className="thead font-weight-strong border border-left-0">
                       <span className="text-left">
-                        {this.props.comment.id > 0 && "Re:"}{" "}
-                        {this.props.post_title}{" "}
-                        {this.props.post_status === "closed" && "[POST CLOSED]"}
+                        {comment.id > 0 && "Re:"}{" "}
+                        {post_title}{" "}
+                        {post_status === "closed" && "[POST CLOSED]"}
                       </span>
-                      {this.props.comment.id > 0 && (
+                      {comment.id > 0 && (
                         <span className="float-right">
                           &nbsp; #
                           <a
-                            href={"#reply" + this.props.comment.id}
+                            href={"#reply" + comment.id}
                             rel="nofollow"
-                            id={"reply" + this.props.comment.id}
-                            name={this.props.comment.id}
+                            id={"reply" + comment.id}
+                            name={comment.id}
                           >
-                            <strong>{this.props.comment.id}</strong>
+                            <strong>{comment.id}</strong>
                           </a>
                         </span>
                       )}{" "}
@@ -73,27 +77,27 @@ class Comment extends Component {
                 <tbody>
                   <tr className="align-top">
                     <td
-                      className={"alt" + ((this.props.comment.id % 2) + 1)}
+                      className={"alt" + ((comment.id % 2) + 1)}
                       width="175"
                     >
-                      <div id={"postmenu-" + this.props.comment.id}>
+                      <div id={"postmenu-" + comment.id}>
                         <div className="font-weight-strong">
-                          {this.props.comment.author ? (
-                            <strong>{this.props.comment.author}</strong>
+                          {comment.author ? (
+                            <strong>{comment.author}</strong>
                           ) : (
                             <strong>&nbsp;</strong>
                           )}
                         </div>
                       </div>
 
-                      {this.props.comment.profilePicUrl ? (
+                      {comment.profilePicUrl ? (
                         <div
                           className="profilePic"
                           style={profilePicStyle(
-                            this.props.comment.profilePicUrl,
+                            comment.profilePicUrl,
                             imageStyle
                           )}
-                          title={this.props.comment.author}
+                          title={comment.author}
                         />
                       ) : (
                         <div
@@ -109,24 +113,24 @@ class Comment extends Component {
                         <br />
                         <div
                           title={getDateTime(
-                            getDateObject(this.props.comment.timestamp)
+                            getDateObject(comment.timestamp)
                           )}
                         >
                           Posted:
                           {timeDifference(
-                            getDateObject(this.props.comment.timestamp)
+                            getDateObject(comment.timestamp)
                           )}
                         </div>
-                        {+getDateObject(this.props.comment.timestamp) !==
-                          +getDateObject(this.props.comment.lastEdit) && (
+                        {+getDateObject(comment.timestamp) !==
+                          +getDateObject(comment.lastEdit) && (
                           <div
                             title={getDateTime(
-                              getDateObject(this.props.comment.lastEdit)
+                              getDateObject(comment.lastEdit)
                             )}
                           >
                             Modified:{" "}
                             {timeDifference(
-                              getDateObject(this.props.comment.lastEdit)
+                              getDateObject(comment.lastEdit)
                             )}
                           </div>
                         )}
@@ -136,16 +140,16 @@ class Comment extends Component {
                     <td
                       className={
                         "alt" +
-                        ((this.props.comment.id % 2) + 1) +
+                        ((comment.id % 2) + 1) +
                         " border relative"
                       }
-                      id={"td-post-" + this.props.comment.id}
+                      id={"td-post-" + comment.id}
                     >
                       <div
                         className="postRichText"
-                        id={"postRichText-" + this.props.comment.id}
+                        id={"postRichText-" + comment.id}
                         dangerouslySetInnerHTML={{
-                          __html: this.props.comment.richText
+                          __html: comment.richText
                         }}
                       />
                     </td>
@@ -153,22 +157,22 @@ class Comment extends Component {
                   
                   <tr>
                     <td
-                      className={"alt" + ((this.props.comment.id % 2) + 1)}
+                      className={"alt" + ((comment.id % 2) + 1)}
                       width="175"
                     />
                     <td
                       className={
                         "alt" +
-                        ((this.props.comment.id % 2) + 1) +
+                        ((comment.id % 2) + 1) +
                         " border relative"
                       }
-                      id={"td-menu-" + this.props.comment.id}
+                      id={"td-menu-" + comment.id}
                     >
                       <CommentMenu
-                        comment_id={this.props.comment.id}
-                        author={this.props.comment.author}
-                        post_key={this.props.post_key}
-                        post_status={this.props.post_status}
+                        comment_id={comment.id}
+                        author={comment.author}
+                        post_key={post_key}
+                        post_status={post_status}
                         deleteCallback={this.deleteCallback}
                         toggleCloseCallback={this.toggleCloseCallback}
                       />

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { getUserName } from "../Scripts/firebase";
 import { Link } from "react-router-dom";
 
-export default class commentMenu extends Component {
+export default class CommentMenu extends Component {
   toggleClose() {
     this.props.toggleCloseCallback();
   }
@@ -12,18 +12,21 @@ export default class commentMenu extends Component {
   }
 
   render() {
+    let post_key = this.props.post_key;
+    let comment_id = this.props.comment_id;
+    let post_status = this.props.post_status;
     return (
       this.props.author === getUserName() && (
         <div className="postmenu small text-muted bottom-right">
           <Link
-            to={"/edit/" + this.props.post_key + "/" + this.props.comment_id}
+            to={"/edit/" + post_key + "/" + this.props.comment_id}
           >
             edit
           </Link>
 
           <span>&nbsp;&nbsp;</span>
 
-          {this.props.comment_id === "1" && this.props.post_status === "open" && (
+          {comment_id === "1" && post_status === "open" && (
             <span>
               <button
                 type="button"
@@ -37,8 +40,8 @@ export default class commentMenu extends Component {
             </span>
           )}
 
-          {this.props.comment_id === "1" &&
-            this.props.post_status === "closed" && (
+          {comment_id === "1" &&
+            post_status === "closed" && (
               <span>
                 <button
                   type="button"

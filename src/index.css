@@ -284,3 +284,28 @@ div.thead {
 .form-control {
   background: #f6f4d0;
 }
+
+/* Pagination */
+.pagination .pagination-wrapper {
+  overflow-x:auto;
+}
+
+.pagination {
+  justify-content: center;
+  margin:30px;
+}
+.pagination li a {
+  background-color: #e0edd3;
+  font-weight: normal;
+  color: #444c3c;
+}
+
+.page-item.disabled .page-link {
+  background-color: #e0edd3;
+  font-weight: normal;
+}
+
+.page-item.active .page-link {
+  background-color: #59674b;
+  font-weight: bold;
+}

@@ -14,16 +14,16 @@ export const storage = firebase.storage();
  * @param {File} file - The file as a File object
  * @param {UploadMetadata} metadata - Metadata for the newly uploaded object
  * @callback [onUploadProgress] - Callback on upload progress triggering when the file is being uploading.
- * @callback [onSuccessfulUpload] - Callback triggering when the file is successfully uploaded
+ * @callback [onSuccessfulUpload] - Callback on the file URL triggering when the file is successfully uploaded
  * @callback [onError] - Callback on error message and object triggering when the upload encounters an error
  */
 export const uploadToStorage = (
   storagePath,
   file,
   metadata = {},
-  onUploadProgress,
-  onSuccessfulUpload,
-  onError
+  onUploadProgress = p => {},
+  onSuccessfulUpload = (msg, url) => {},
+  onError = err => {}
 ) => {
   var ref = storage.ref(storagePath).child(file.name);
   // Example for metadata
@@ -44,9 +44,7 @@ export const uploadToStorage = (
       // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
       var uploadProgress =
         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      if (onUploadProgress) {
-        onUploadProgress(uploadProgress);
-      }
+      onUploadProgress(uploadProgress);
       switch (snapshot.state) {
         case "paused":
           console.log("Upload is paused");
@@ -81,9 +79,7 @@ export const uploadToStorage = (
             " error: unknown error occurred, inspect error.serverResponse";
           break;
       }
-      if (onError) {
-        onError(msg, error);
-      }
+      onError(msg, error);
       //Unsubscribe after error
       uploadTask();
     },
@@ -91,9 +87,7 @@ export const uploadToStorage = (
       // Handle successful uploads on complete
       // For instance, get the download URL: https://firebasestorage.googleapis.com/...
       uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-        if (onSuccessfulUpload) {
-          onSuccessfulUpload(downloadURL);
-        }
+        onSuccessfulUpload(downloadURL);
       });
       //Unsubscribe after complete
       uploadTask();
@@ -165,23 +159,25 @@ export const signOut = () => {
   firebase.auth().signOut();
 };
 
-/*
-// Returns true if a user is signed-in.
-isUserSignedIn() => {
-  return !!firebase.auth().currentUser;
-}
-*/
-
-/**
- * CRUD operations
- *
- */
+/* CRUD and other operations on Comments and Posts collections in Firebase Database */
 
 /**
  * Get the post collection
  * @type {firebase.firestore.DocumentReference}
  */
 export const fire_posts = firebase.firestore().collection("posts");
+
+/**
+ * Get the number of documents in the Posts collection. Should work fine for small (<100) collections.
+ * See https://stackoverflow.com/questions/46554091/firebase-firestore-collection-count/49407570
+ *
+ * @callback [onCommentSnapshot] - Callback on a query snapshot (e.g. use .size, .empty, .forEach) triggering when results are retrieved for the Comments collection
+ */
+export const postQuerySnapshot = onCommentSnapshot => {
+  return fire_posts.get().then(snap => {
+    onCommentSnapshot(snap);
+  });
+};
 
 /**
  * Get the comment collection
@@ -203,13 +199,15 @@ export const getPostReference = () => {
  *
  * @param {*} fire_post - An existing DocumentReference to a Post
  * @param {*} data_post - The Post data to be set
- * @callback [onSetDocument]
+ * @callback [onSetDocument] - Callback triggering when Comment document is successfully set
  */
-export const setPostReference = (fire_post, data_post, onSuccessfullySetDocument) => {
+export const setPostReference = (
+  fire_post,
+  data_post,
+  onSetDocument = () => {}
+) => {
   fire_post.set(data_post).then(() => {
-    if (onSuccessfullySetDocument) {
-      onSuccessfullySetDocument();
-    }
+    onSetDocument();
   });
 };
 
@@ -217,17 +215,15 @@ export const setPostReference = (fire_post, data_post, onSuccessfullySetDocument
  * Get a post document and optionally run a callback on it
  *
  * @param {string} post_key - The post id
- * @callback [onGetDocument] - Function to be called when comment document is successfully retrieved
+ * @callback [onGetDocument] - Callback on a document triggering when comment document is successfully retrieved
  */
-export const getPost = (post_key, onGetDocument) => {
+export const getPost = (post_key, onGetDocument = () => {}) => {
   fire_posts
     .doc(post_key)
     .get()
     .then(doc => {
       if (doc.exists) {
-        if (onGetDocument) {
-          onGetDocument(doc);
-        }
+        onGetDocument(doc);
       } else {
         console.error("No such Post document");
       }
@@ -238,17 +234,15 @@ export const getPost = (post_key, onGetDocument) => {
  * Get a comment document and optionally run a callback on it
  *
  * @param {string} post_key - The post id
- * @callback [onGetDocument] - Function to be called when comment document is successfully retrieved
+ * @callback [onGetDocument] - Callback on a document triggering comment document is successfully retrieved
  */
-export const getComment = (post_key, onGetDocument) => {
+export const getComment = (post_key, onGetDocument = () => {}) => {
   fire_comments
     .doc(post_key)
     .get()
     .then(doc => {
       if (doc.exists) {
-        if (onGetDocument) {
-          onGetDocument(doc);
-        }
+        onGetDocument(doc);
       } else {
         console.error("No such Comment document");
       }
@@ -265,16 +259,25 @@ export const getComment = (post_key, onGetDocument) => {
  * @param {string} post_key - The post id
  * @param {number} comment_key - The comment key
  * @param {object} data_comment
+ * @callback [onSetDocument] - Callback triggering on a successful update of the Comment document
  */
-export const pushComment = (post_key, comment_key, data) => {
+export const pushComment = (
+  post_key,
+  comment_key,
+  data,
+  onSetDocument = () => {}
+) => {
   const fire_comment_doc = fire_comments.doc(post_key);
   fire_comment_doc.get().then(doc => {
     var document = doc.data();
     if (!document) document = {};
     document[comment_key] = data;
-    fire_comment_doc.set(document).catch(error => {
-      console.error("Error on setting comment document: ", error);
-    });
+    fire_comment_doc
+      .set(document)
+      .then(onSetDocument())
+      .catch(error => {
+        console.error("Error on setting comment document: ", error);
+      });
   });
 };
 
@@ -283,9 +286,9 @@ export const pushComment = (post_key, comment_key, data) => {
  *
  * @param {string} post_key - The post id
  * @param {object} data_post - Object with key-value pairs to edit in the post document
- * @callback [onAfterupdate] - Function to be called after a successfull update. No document available
+ * @callback [onAfterupdate] - Callback triggering after a successfull update. No document available
  */
-export const updatePost = (post_key, data_post, onAfterUpdate) => {
+export const updatePost = (post_key, data_post, onAfterUpdate = () => {}) => {
   const fire_post_doc = fire_posts.doc(post_key);
   fire_post_doc
     .get()
@@ -294,9 +297,7 @@ export const updatePost = (post_key, data_post, onAfterUpdate) => {
         .update({ ...doc0.data(), ...data_post })
         .then(() => {
           /* NB: no document available */
-          if (onAfterUpdate) {
-            onAfterUpdate();
-          }
+          onAfterUpdate();
         })
         .catch(error => {
           console.error("Error updating post document: ", error);
@@ -313,17 +314,26 @@ export const updatePost = (post_key, data_post, onAfterUpdate) => {
  * @param {string} post_key - The post id
  * @param {string} commentid - The comment key
  * @param {object} data_comment - Object with key-value pairs to edit in the comment document
+ * @callback [onAfterSetDocument] - Callback triggering on a successful write of the Comment document (e.g. window.location.reload())
  */
-export const updateComment = (post_key, commentid, data_comment) => {
+export const updateComment = (
+  post_key,
+  commentid,
+  data_comment,
+  onAfterSetDocument = () => {}
+) => {
   const fire_comment_doc = fire_comments.doc(post_key);
   fire_comment_doc
     .get()
     .then(doc0 => {
       var document = { ...doc0.data() };
       document[commentid] = { ...document[commentid], ...data_comment };
-      fire_comment_doc.set(document).catch(error => {
-        console.error("Error on setting comment: ", error);
-      });
+      fire_comment_doc
+        .set(document)
+        .then(onAfterSetDocument())
+        .catch(error => {
+          console.error("Error on setting comment: ", error);
+        });
     })
     .catch(error => {
       console.error("Error on getting comment: ", error);
@@ -336,7 +346,7 @@ export const updateComment = (post_key, commentid, data_comment) => {
  *
  * @param {string} post_key - The post id
  * @param {string} commentid - The comment key
- * @callback [onAfterSetDocument] - Function to be called on a successful delete (e.g. window.location.reload())
+ * @callback [onAfterSetDocument] - Callback triggering on a successful write of the Comment document (e.g. window.location.reload())
  */
 export const invalidateComment = (post_key, commentid, onAfterSetDocument) => {
   const data_comment = {
@@ -355,7 +365,7 @@ export const invalidateComment = (post_key, commentid, onAfterSetDocument) => {
  * Delete text, username, etc of a user's post document
  *
  * @param {string} post_key - The post id
- * @callback [callback] - Function to be called on a successful delete (e.g. window.location.reload())
+ * @callback [onAfterupdate] - Callback triggering on a successful update of the Post document (e.g. window.location.reload())
  */
 export const invalidatePost = (post_key, onAfterupdate) => {
   const data_post = {

@@ -121,7 +121,7 @@ class Post extends Component {
   }
 
   render() {
-    const { isLoading } = this.state;
+    const { isLoading, comment_array, post, post_key, key,showReply } = this.state;
     return (
       <div className="container">
         <div>
@@ -138,21 +138,21 @@ class Post extends Component {
             </div>
             <div className="panel-body">
               {isLoading && <div className="spinner" />}
-              {this.state.comment_array.map(comment => (
+              {comment_array.map(comment => (
                 <Comment
                   key={comment.id}
                   comment={comment}
-                  post_title={this.state.post.title}
-                  post_key={this.state.post_key}
-                  post_status={this.state.post.status}
+                  post_title={post.title}
+                  post_key={post_key}
+                  post_status={post.status}
                   deleteCallback={this.deleteCallback}
                   toggleCloseCallback={this.toggleCloseCallback}
                 />
               ))}
               <div>
-                {!this.state.showReply && this.state.post.status === "open" && (
+                {!showReply && post.status === "open" && (
                   <button
-                    onClick={() => this.reply(this.state.key)}
+                    onClick={() => this.reply(key)}
                     className="btn btn-bgn ml-0"
                   >
                     Reply
@@ -165,7 +165,7 @@ class Post extends Component {
         </div>
         <br />
         <div>
-          {this.state.showReply && (
+          {showReply && (
             <Reply
               post_key={this.props.match.params.id}
               toggleShowReply={() => this.toggleShowReplyComment()}

@@ -304,6 +304,7 @@ class TextEditor extends React.Component {
    * @return {Element} element
    */
   render() {
+    let {uploadProgress, value} = this.state;
     return (
       <div className="textEditor">
         <EditorContainer>
@@ -349,15 +350,15 @@ class TextEditor extends React.Component {
               />
             </div>
             {/* Progress bar of Upload image */}
-            {this.state.uploadProgress < 100 && (
+            {uploadProgress < 100 && (
               <Progress
                 animated
-                value={this.state.uploadProgress}
+                value={uploadProgress}
                 color="info"
                 max={100}
                 style={{ width: "200px" }}
               >
-                {this.state.uploadProgress.toFixed(0)}
+                {uploadProgress.toFixed(0)}
               </Progress>
             )}
           </Toolbar>
@@ -370,7 +371,7 @@ class TextEditor extends React.Component {
                 height: this.props.height ? this.props.height : "25em"
               }}
               ref={this.ref}
-              value={this.state.value}
+              value={value}
               plugins={plugins}
               schema={schema}
               //onDrop={this.onDropOrPaste}
