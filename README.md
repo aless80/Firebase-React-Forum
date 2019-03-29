@@ -2,10 +2,10 @@
 ## Description
 This is a forum website based on (Firebase)[https://firebase.google.com/] and React. 
 
-![Alt Text](https://github.com/aless80/Firebase-React-Forum/blob/master/img/PostList.png =300x)
+![Alt Text](https://github.com/aless80/Firebase-React-Forum/blob/master/img/PostList.png)
 
 
-![Alt Text](https://github.com/aless80/Firebase-React-Forum/blob/master/img/Post.png =300x)
+![Alt Text](https://github.com/aless80/Firebase-React-Forum/blob/master/img/Post.png)
 
 ## Set up
 Create an account in Firebase with a database. Set up a Database. Find the configuration and place it in a src/Firebase.js file that you create from template:
