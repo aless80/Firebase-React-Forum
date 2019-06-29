@@ -56,6 +56,7 @@ comments: {
 <!--
 
 ## Todo
+* emojis in TextEditor
 * focus on texteditor in Reply component
 * JSDoc http://usejsdoc.org/about-getting-started.htm
 * firebase storage and upload images from TextEditor

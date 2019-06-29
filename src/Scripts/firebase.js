@@ -196,7 +196,8 @@ export const getPostReference = () => {
 };
 
 /**
- *
+ * Save a Post reference
+ * 
  * @param {*} fire_post - An existing DocumentReference to a Post
  * @param {*} data_post - The Post data to be set
  * @callback [onSetDocument] - Callback triggering when Comment document is successfully set

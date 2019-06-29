@@ -121,7 +121,7 @@ class Post extends Component {
   }
 
   render() {
-    const { isLoading, comment_array, post, post_key, key,showReply } = this.state;
+    const { isLoading, comment_array, post, post_key, key, showReply } = this.state;
     return (
       <div className="container">
         <div>
